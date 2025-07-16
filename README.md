@@ -1,2 +1,2 @@
-# net-tuner
+# next-tuner
 Projeto para aprender a publicar app com Vercel
