@@ -1,12 +1,11 @@
-// components/TabPanel.tsx
 'use client'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  Palette,
+  Hash,
   Guitar,
-  Dumbbell,
+  Ear,
   Settings,
 } from 'lucide-react'
 
@@ -17,7 +16,7 @@ export default function TabPanel() {
     {
       name: 'Cromático',
       path: '/',
-      icon: <Palette className="w-5 h-5" />,
+      icon: <Hash className="w-5 h-5" />,
     },
     {
       name: 'Corda a corda',
@@ -27,7 +26,7 @@ export default function TabPanel() {
     {
       name: 'Treinar',
       path: '/treinar',
-      icon: <Dumbbell className="w-5 h-5" />,
+      icon: <Ear className="w-5 h-5" />,
     },
     {
       name: 'Preferências',

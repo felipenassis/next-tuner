@@ -1,6 +1,6 @@
 'use client'
 
-import { Diamond, Circle } from "lucide-react"
+import { Diamond, CircleSmall } from "lucide-react"
 import { useState, useMemo, useEffect } from "react"
 import useFrequencyAnalyzer from "@/hooks/useFrequencyAnalyzer"
 
@@ -41,18 +41,37 @@ export default function AfinadorCromatico() {
   }, [])
 
   return (
-    <div className="flex flex-col items-center  ">
-      <div className="flex gap-2 mb-8">
-        <Circle fill={scale == 1 ? '#e7000b' : 'none'} />
-        <Circle fill={scale == 2 ? '#e7000b' : 'none'} />
-        <Circle fill={scale == 3 ? '#e7000b' : 'none'} />
-        <Circle fill={scale == 4 ? '#e7000b' : 'none'} />
-        <Diamond fill={scale == 5 ? '#00c951' : 'none'} />
-        <Circle fill={scale == 6 ? '#e7000b' : 'none'} />
-        <Circle fill={scale == 7 ? '#e7000b' : 'none'} />
-        <Circle fill={scale == 8 ? '#e7000b' : 'none'} />
-        <Circle fill={scale == 9 ? '#e7000b' : 'none'} />
-      </div>
+    <div className="flex flex-col items-center">
+      { !!frequency &&
+        <div className="flex items-center gap-2 mb-8">
+          <CircleSmall fill={scale == 1 ? '#e7000b' : 'none'} />
+          <CircleSmall fill={scale == 1 ? '#e7000b' : 'none'} />
+          <CircleSmall fill={scale == 2 ? '#e7000b' : 'none'} />
+          <CircleSmall fill={scale == 3 ? '#e7000b' : 'none'} />
+          <CircleSmall fill={scale == 4 ? '#e7000b' : 'none'} />
+          <Diamond size={30} fill={scale == 5 ? '#00c951' : 'none'} />
+          <CircleSmall fill={scale == 6 ? '#e7000b' : 'none'} />
+          <CircleSmall fill={scale == 7 ? '#e7000b' : 'none'} />
+          <CircleSmall fill={scale == 8 ? '#e7000b' : 'none'} />
+          <CircleSmall fill={scale == 9 ? '#e7000b' : 'none'} />
+          <CircleSmall fill={scale == 1 ? '#e7000b' : 'none'} />
+        </div>
+      }
+      { !frequency &&
+        <div className="flex items-center gap-2 mb-8">
+          <CircleSmall className="text-gray-700" />
+          <CircleSmall className="text-gray-700" />
+          <CircleSmall className="text-gray-700" />
+          <CircleSmall className="text-gray-700" />
+          <CircleSmall className="text-gray-700" />
+          <Diamond size={30} className="text-gray-700" />
+          <CircleSmall className="text-gray-700" />
+          <CircleSmall className="text-gray-700" />
+          <CircleSmall className="text-gray-700" />
+          <CircleSmall className="text-gray-700" />
+          <CircleSmall className="text-gray-700" />
+        </div>
+      }
       <div>
         { note && <span className="text-9xl">{ note }</span> }
         {!note && <span className="text-9xl text-gray-700">A</span> }
@@ -60,8 +79,8 @@ export default function AfinadorCromatico() {
         { !octave && <span className="text-xl text-gray-700">0</span> }
       </div>
       <div>
-        { Boolean(frequency) && <span className="text-sm">{ Math.round(frequency) }hz</span> }
-        { !Boolean(frequency) && <span className="text-sm text-gray-700">0hz</span> }
+        { !!frequency && <span className="text-sm">{ Math.round(frequency) }hz</span> }
+        { !frequency && <span className="text-sm text-gray-700">Toque uma nota</span> }
       </div>
     </div>
   )
