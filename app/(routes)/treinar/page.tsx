@@ -1,8 +1,13 @@
+'use client'
 
-export default function Treinar() {
+import TonePlayer from '../../components/TuningPlayer';
+
+const Treinar = () => {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center p-8 pb-20 gap-16 sm:p-20">
-      Treinar
+    <div className="p-6 max-w-md mx-auto">
+      <TonePlayer />
     </div>
   );
-}
+};
+
+export default Treinar;
