@@ -44,7 +44,7 @@ export default function TabPanel() {
   }
 
   return (
-    <div className="flex items-center justify-center bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+    <div className="flex items-center justify-center bg-gray-100 dark:bg-gray-800 p-1">
       <nav className="flex space-x-1" aria-label="Tabs">
         {tabs.map((tab) => {
           const active = isActive(tab.path)

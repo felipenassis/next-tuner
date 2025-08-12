@@ -1,0 +1,247 @@
+// pages/chord-ear-training.tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useChordPlayer } from '@/hooks/useChordPlayer';
+
+type Difficulty = 'easy' | 'medium' | 'hard';
+
+type Chord = {
+  name: string;
+  frequencies: number[];
+};
+
+type ChordProgression = {
+  chords: Chord[];
+  answerIndices: number[];
+  revealedIndices: number[];
+};
+
+const CHORDS: Record<string, Chord> = {
+  C: { name: 'C', frequencies: [130.81, 164.81, 196.00, 261.63, 329.63] }, // C3, E3, G3, C4, E4
+  G: { name: 'G', frequencies: [98.00, 123.47, 146.83, 196.00, 246.94, 293.66, 392.00] }, // G2, B2, D3, G3, D4, G4 (adicionei mais oitavas)
+  Am: { name: 'Am', frequencies: [110.00, 130.81, 164.81, 220.00, 261.63, 329.63] }, // A2, E3, A3, C4, E4 (A2=110Hz)
+  F: { name: 'F', frequencies: [87.31, 130.81, 174.61, 220.00, 261.63, 349.23, 440.00, 523.25] }, // F2, C3, F3, A3, C4, F4 (F2=87.31Hz)
+  Dm: { name: 'Dm', frequencies: [146.83, 185.00, 220.00, 293.66, 349.23, 440.00] }, // D3, A3, D4, F4 (D3=146.83Hz)
+  Em: { name: 'Em', frequencies: [82.41, 123.47, 164.81, 207.65, 246.94, 329.63, 391.99, 493.88] } // E2, B2, E3, G3, B3, E4 (E2=82.41Hz)
+};
+
+const CHORD_PROGRESSIONS: Record<Difficulty, Chord[][]> = {
+  easy: [
+    [CHORDS.C, CHORDS.G, CHORDS.Am],
+    [CHORDS.C, CHORDS.F, CHORDS.G],
+    [CHORDS.Am, CHORDS.F, CHORDS.C],
+  ],
+  medium: [
+    [CHORDS.C, CHORDS.G, CHORDS.Am, CHORDS.F],
+    [CHORDS.Am, CHORDS.F, CHORDS.C, CHORDS.G],
+    [CHORDS.C, CHORDS.F, CHORDS.G, CHORDS.Am],
+  ],
+  hard: [
+    [CHORDS.C, CHORDS.G, CHORDS.Am, CHORDS.F, CHORDS.Dm],
+    [CHORDS.Am, CHORDS.F, CHORDS.C, CHORDS.G, CHORDS.Em],
+    [CHORDS.C, CHORDS.F, CHORDS.G, CHORDS.Am, CHORDS.Dm],
+  ],
+};
+
+const getRandomProgression = (difficulty: Difficulty): ChordProgression => {
+  const progressions = CHORD_PROGRESSIONS[difficulty];
+  const randomIndex = Math.floor(Math.random() * progressions.length);
+  const chords = progressions[randomIndex];
+  
+  if (difficulty === 'easy') {
+    return {
+      chords,
+      answerIndices: [2], // Último acorde
+      revealedIndices: [0, 1] // Primeiro e segundo acordes
+    };
+  } else if (difficulty === 'medium') {
+    return {
+      chords,
+      answerIndices: [2, 3], // Terceiro e quarto acordes
+      revealedIndices: [0, 1] // Primeiro e segundo acordes
+    };
+  } else {
+    return {
+      chords,
+      answerIndices: [3, 4], // Quarto e quinto acordes
+      revealedIndices: [0, 1, 2] // Primeiro, segundo e terceiro acordes
+    };
+  }
+};
+
+export default function ChordEarTraining() {
+  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
+  const [currentProgression, setCurrentProgression] = useState<ChordProgression | null>(null);
+  const [userAnswers, setUserAnswers] = useState<string[]>([]);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showResult, setShowResult] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
+  const [score, setScore] = useState(0);
+  
+  const { playChord, stopChord } = useChordPlayer();
+
+  const startNewGame = () => {
+    setCurrentProgression(getRandomProgression(difficulty));
+    setUserAnswers([]);
+    setShowResult(false);
+    setIsCorrect(false);
+  };
+
+  useEffect(() => {
+    startNewGame();
+  }, [difficulty]);
+
+  const playProgression = async () => {
+    if (!currentProgression) return;
+    
+    setIsPlaying(true);
+    stopChord();
+    
+    for (let i = 0; i < currentProgression.chords.length; i++) {
+      const chord = currentProgression.chords[i];
+      playChord(chord.frequencies, 1.5, 0.6);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+    }
+    
+    setIsPlaying(false);
+  };
+
+  const handleAnswer = (chordName: string) => {
+    if (!currentProgression || showResult) return;
+    
+    const newAnswers = [...userAnswers, chordName];
+    setUserAnswers(newAnswers);
+    
+    if (newAnswers.length === currentProgression.answerIndices.length) {
+      const isAllCorrect = currentProgression.answerIndices.every((index, i) => {
+        return currentProgression.chords[index].name === newAnswers[i];
+      });
+      
+      setIsCorrect(isAllCorrect);
+      setShowResult(true);
+      if (isAllCorrect) {
+        setScore(prev => prev + 1);
+      }
+    }
+  };
+
+  const renderChordSequence = () => {
+    if (!currentProgression) return null;
+
+    return (
+      <div className="flex justify-center gap-2 mb-4">
+        {currentProgression.chords.map((chord, index) => {
+          const isRevealed = currentProgression.revealedIndices.includes(index);
+          const isAnswer = currentProgression.answerIndices.includes(index);
+          const userAnswerIndex = currentProgression.answerIndices.indexOf(index);
+          const userAnswer = userAnswers[userAnswerIndex];
+
+          return (
+            <div 
+              key={index}
+              className={`w-12 h-12 rounded-md flex items-center justify-center text-lg font-bold
+                ${isRevealed ? 'bg-blue-500 text-white' : ''}
+                ${isAnswer && !showResult ? 'bg-gray-300 text-gray-800' : ''}
+                ${isAnswer && showResult ? 
+                  (currentProgression.chords[index].name === userAnswer ? 
+                    'bg-green-500 text-white' : 'bg-red-500 text-white') : ''}
+              `}
+            >
+              {isRevealed ? chord.name : 
+               isAnswer && userAnswer ? userAnswer : 
+               isAnswer ? '?' : ''}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+        <h1 className="text-2xl font-bold text-center mb-6">Exercício de Audição Musical</h1>
+        
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">Dificuldade:</h2>
+          <div className="flex gap-2">
+            {(['easy', 'medium', 'hard'] as Difficulty[]).map((level) => (
+              <button
+                key={level}
+                onClick={() => setDifficulty(level)}
+                className={`px-4 py-2 rounded-md ${
+                  difficulty === level
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 hover:bg-gray-300'
+                }`}
+              >
+                {level === 'easy' ? 'Fácil' : level === 'medium' ? 'Médio' : 'Difícil'}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">Progressão de Acordes:</h2>
+          {currentProgression && (
+            <div className="mb-4">
+              <p className="text-gray-700 mb-2 text-center">
+                {difficulty === 'easy' ? 'Ouça os 3 acordes e identifique o último' : 
+                 difficulty === 'medium' ? 'Ouça os 4 acordes e identifique os 2 últimos' : 
+                 'Ouça os 5 acordes e identifique os 2 últimos'}
+              </p>
+              
+              {renderChordSequence()}
+              
+              <button
+                onClick={playProgression}
+                disabled={isPlaying}
+                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400 w-full"
+              >
+                {isPlaying ? 'Tocando...' : 'Tocar Progressão'}
+              </button>
+            </div>
+          )}
+        </div>
+        
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">Selecione os acordes que você ouviu:</h2>
+          <div className="grid grid-cols-2 gap-2">
+            {Object.keys(CHORDS).map((chordName) => (
+              <button
+                key={chordName}
+                onClick={() => handleAnswer(chordName)}
+                disabled={showResult || userAnswers.length >= currentProgression?.answerIndices.length || !currentProgression}
+                className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md disabled:opacity-50"
+              >
+                {chordName}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        {showResult && (
+          <div className={`p-4 rounded-md mb-4 ${
+            isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          }`}>
+            <p className="font-semibold">
+              {isCorrect ? '✅ Correto!' : '❌ Incorreto!'}
+            </p>
+            <p>
+              Resposta correta: {currentProgression.answerIndices.map(i => currentProgression.chords[i].name).join(' e ')}
+            </p>
+            {isCorrect && <p className="mt-2">Pontuação: {score}</p>}
+          </div>
+        )}
+        
+        <button
+          onClick={startNewGame}
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 w-full"
+        >
+          Novo Exercício
+        </button>
+      </div>
+    </div>
+  );
+}

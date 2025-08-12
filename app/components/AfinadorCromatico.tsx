@@ -1,6 +1,6 @@
 'use client'
 
-import { Diamond, CircleSmall } from "lucide-react"
+import { Circle, Play } from "lucide-react"
 import { useState, useMemo, useEffect } from "react"
 import useFrequencyAnalyzer from "@/hooks/useFrequencyAnalyzer"
 
@@ -22,7 +22,7 @@ export default function AfinadorCromatico() {
     
     // Garante que o resultado esteja entre 1 e 9
     return Math.max(1, Math.min(9, valorMapeado));
-}
+  }
 
   useMemo(() => {
     if (cents) {
@@ -44,32 +44,32 @@ export default function AfinadorCromatico() {
     <div className="flex flex-col items-center">
       { !!frequency &&
         <div className="flex items-center gap-2 mb-8">
-          <CircleSmall fill={scale == 1 ? '#e7000b' : 'none'} />
-          <CircleSmall fill={scale == 1 ? '#e7000b' : 'none'} />
-          <CircleSmall fill={scale == 2 ? '#e7000b' : 'none'} />
-          <CircleSmall fill={scale == 3 ? '#e7000b' : 'none'} />
-          <CircleSmall fill={scale == 4 ? '#e7000b' : 'none'} />
-          <Diamond size={30} fill={scale == 5 ? '#00c951' : 'none'} />
-          <CircleSmall fill={scale == 6 ? '#e7000b' : 'none'} />
-          <CircleSmall fill={scale == 7 ? '#e7000b' : 'none'} />
-          <CircleSmall fill={scale == 8 ? '#e7000b' : 'none'} />
-          <CircleSmall fill={scale == 9 ? '#e7000b' : 'none'} />
-          <CircleSmall fill={scale == 1 ? '#e7000b' : 'none'} />
+          <Play fill={scale == 1 ? '#e7000b' : 'none'} />
+          <Play fill={scale == 1 ? '#e7000b' : 'none'} />
+          <Play fill={scale == 2 ? '#e7000b' : 'none'} />
+          <Play fill={scale == 3 ? '#e7000b' : 'none'} />
+          <Play fill={scale == 4 ? '#e7000b' : 'none'} />
+          <Circle size={30} fill={scale == 5 ? '#00c951' : 'none'} />
+          <Play fill={scale == 6 ? '#e7000b' : 'none'} className="-scale-x-100" />
+          <Play fill={scale == 7 ? '#e7000b' : 'none'} className="-scale-x-100" />
+          <Play fill={scale == 8 ? '#e7000b' : 'none'} className="-scale-x-100" />
+          <Play fill={scale == 9 ? '#e7000b' : 'none'} className="-scale-x-100" />
+          <Play fill={scale == 1 ? '#e7000b' : 'none'} className="-scale-x-100" />
         </div>
       }
       { !frequency &&
         <div className="flex items-center gap-2 mb-8">
-          <CircleSmall className="text-gray-700" />
-          <CircleSmall className="text-gray-700" />
-          <CircleSmall className="text-gray-700" />
-          <CircleSmall className="text-gray-700" />
-          <CircleSmall className="text-gray-700" />
-          <Diamond size={30} className="text-gray-700" />
-          <CircleSmall className="text-gray-700" />
-          <CircleSmall className="text-gray-700" />
-          <CircleSmall className="text-gray-700" />
-          <CircleSmall className="text-gray-700" />
-          <CircleSmall className="text-gray-700" />
+          <Play className="text-gray-700" />
+          <Play className="text-gray-700" />
+          <Play className="text-gray-700" />
+          <Play className="text-gray-700" />
+          <Play className="text-gray-700" />
+          <Circle size={30} className="text-gray-700" />
+          <Play className="text-gray-700 -scale-x-100" />
+          <Play className="text-gray-700 -scale-x-100" />
+          <Play className="text-gray-700 -scale-x-100" />
+          <Play className="text-gray-700 -scale-x-100" />
+          <Play className="text-gray-700 -scale-x-100" />
         </div>
       }
       <div>

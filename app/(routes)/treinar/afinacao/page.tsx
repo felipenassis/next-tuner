@@ -1,10 +1,11 @@
 'use client'
 
+import TuningTrainer from '../../../components/TuningTrainer';
+
 const Treinar = () => {
   return (
     <div className="p-6 max-w-md mx-auto">
-      <a href="treinar/afinacao">Afinação</a>
-      <a href="treinar/progressao">Progressão</a>
+      <TuningTrainer />
     </div>
   );
 };
