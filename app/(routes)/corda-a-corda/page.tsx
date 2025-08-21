@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTonePlayer } from '@/hooks/useTonePlayer';
 import String, { StringColor } from '@/app/components/String';
+import { calculateFrequency } from '@/lib/utils';
 
 type Instrument = 'guitar' | 'violin' | 'cello' | 'bass' | 'ukulele' | 'cavaco';
 
@@ -54,17 +55,6 @@ const getTuningFromLocalStorage = (): number => {
   }
 };
 
-const calculateFrequency = (note: string, tuningA4: number): number => {
-  const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-  
-  const noteName = note.replace(/[0-9]/g, '');
-  const octave = parseInt(note.replace(/[^0-9]/g, '')) || 4;
-  const noteIndex = NOTE_NAMES.indexOf(noteName);
-  
-  const semitonesFromA4 = noteIndex - NOTE_NAMES.indexOf('A') + (octave - 4) * 12;
-  return tuningA4 * Math.pow(2, semitonesFromA4 / 12);
-};
-
 const InstrumentTuner = () => {
   const [instrument, setInstrument] = useState<Instrument>('guitar');
   const [tuningType, setTuningType] = useState('standard');
@@ -92,18 +82,6 @@ const InstrumentTuner = () => {
   const playString = (frequency: number) => {
     stopTone();
     playTone(frequency, 4, 0.7);
-  };
-
-  const formatNoteName = (note: string): string => {
-    const noteMap: Record<string, string> = {
-      'A': 'Lá', 'A#': 'Lá#', 'Bb': 'Sib', 'B': 'Si', 'C': 'Dó', 'C#': 'Dó#',
-      'Db': 'Réb', 'D': 'Ré', 'D#': 'Ré#', 'Eb': 'Mib', 'E': 'Mi', 'F': 'Fá',
-      'F#': 'Fá#', 'Gb': 'Solb', 'G': 'Sol', 'G#': 'Sol#', 'Ab': 'Láb'
-    };
-    
-    const noteName = note.replace(/[0-9]/g, '');
-    const octave = note.replace(/[^0-9]/g, '');
-    return `${noteMap[noteName] || noteName}${octave}`;
   };
 
   const getInstrumentName = (instrument: Instrument): string => {

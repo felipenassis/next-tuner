@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import TabPanel from './components/TabPanel'
+import TabPanel from '@/app/components/TabPanel'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -35,9 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={`${inter.className} bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100`}>
         <main className="min-h-screen flex flex-col flex-grow">
-          <div className="mb-6">
-            <TabPanel />
-          </div>
+          <TabPanel />
           {children}
         </main>
       </body>
