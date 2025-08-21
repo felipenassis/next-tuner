@@ -25,6 +25,7 @@ export default function SettingsPage() {
             onChange={(e) => handleThemeChange(e.target.value as Theme)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
           >
+            <option value="system">Mesmo do sistema</option>
             <option value="light">Claro</option>
             <option value="dark">Escuro</option>
           </select>
