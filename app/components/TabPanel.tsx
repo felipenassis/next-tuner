@@ -52,13 +52,13 @@ export default function TabPanel() {
             <Link
               key={tab.name}
               href={tab.path}
-              className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 relative ${
+              className={`flex flex-col sm:flex-row gap-2 items-center px-4 py-2 text-xs sm:text-sm text-center font-medium rounded-md transition-all duration-200 relative ${
                 active
                   ? 'text-indigo-600 dark:text-indigo-400 bg-white dark:bg-gray-700 font-semibold'
                   : 'text-gray-600 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
             >
-              <span className={`mr-2 ${active ? 'text-indigo-600 dark:text-indigo-400' : ''}`}>
+              <span className={active ? 'text-indigo-600 dark:text-indigo-400' : ''}>
                 {tab.icon}
               </span>
               {tab.name}
