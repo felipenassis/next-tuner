@@ -3,12 +3,14 @@
 
 import { useState, useEffect } from 'react';
 import { useChordPlayer } from '@/hooks/useChordPlayer';
+import { calculateFrequency } from '@/lib/utils';
+import useSettings from '@/hooks/useSettings';
 
 type Difficulty = 'easy' | 'medium' | 'hard';
 
 type Chord = {
   name: string;
-  frequencies: number[];
+  notes: string[];
 };
 
 type ChordProgression = {
@@ -17,13 +19,13 @@ type ChordProgression = {
   revealedIndices: number[];
 };
 
-const CHORDS: Record<string, Chord> = {
-  C: { name: 'C', frequencies: [130.81, 164.81, 196.00, 261.63, 329.63] }, // C3, E3, G3, C4, E4
-  G: { name: 'G', frequencies: [98.00, 123.47, 146.83, 196.00, 246.94, 293.66, 392.00] }, // G2, B2, D3, G3, D4, G4 (adicionei mais oitavas)
-  Am: { name: 'Am', frequencies: [110.00, 130.81, 164.81, 220.00, 261.63, 329.63] }, // A2, E3, A3, C4, E4 (A2=110Hz)
-  F: { name: 'F', frequencies: [87.31, 130.81, 174.61, 220.00, 261.63, 349.23, 440.00, 523.25] }, // F2, C3, F3, A3, C4, F4 (F2=87.31Hz)
-  Dm: { name: 'Dm', frequencies: [146.83, 185.00, 220.00, 293.66, 349.23, 440.00] }, // D3, A3, D4, F4 (D3=146.83Hz)
-  Em: { name: 'Em', frequencies: [82.41, 123.47, 164.81, 207.65, 246.94, 329.63, 391.99, 493.88] } // E2, B2, E3, G3, B3, E4 (E2=82.41Hz)
+const CHORDS: Record<string, { name: string; notes: string[] }> = {
+  C: { name: "C", notes: ["C3", "E3", "G3", "C4", "E4"] },
+  G: { name: "G", notes: ["G2", "B2", "D3", "G3", "D4", "G4"] },
+  Am: { name: "Am", notes: ["A2", "E3", "A3", "C4", "E4"] },
+  F: { name: "F", notes: ["F2", "C3", "F3", "A3", "C4", "F4"] },
+  Dm: { name: "Dm", notes: ["D3", "A3", "D4", "F4"] },
+  Em: { name: "Em", notes: ["E2", "B2", "E3", "G3", "B3", "E4"] },
 };
 
 const CHORD_PROGRESSIONS: Record<Difficulty, Chord[][]> = {
@@ -78,6 +80,7 @@ export default function ChordEarTraining() {
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
+  const { settings } = useSettings();
   
   const { playChord, stopChord } = useChordPlayer();
 
@@ -100,7 +103,8 @@ export default function ChordEarTraining() {
     
     for (let i = 0; i < currentProgression.chords.length; i++) {
       const chord = currentProgression.chords[i];
-      playChord(chord.frequencies, 1.5, 0.6);
+      const frequencies = chord.notes.map(note => calculateFrequency(note, parseInt(settings.tuning)))
+      playChord(frequencies, 1.5, 0.6);
       await new Promise(resolve => setTimeout(resolve, 1500));
     }
     

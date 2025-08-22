@@ -7,7 +7,8 @@ export function calculateFrequency(note: string, tuningA4: number): number {
   const NOTE_NAMES_B = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
   
   const noteName = note.replace(/[0-9]/g, '');
-  const octave = parseInt(note.replace(/[^0-9]/g, '')) || 4;
+  const parsed = parseInt(note.replace(/[^0-9]/g, ''), 10);
+  const octave = Number.isNaN(parsed) ? 4 : parsed;
 
   let noteIndex = NOTE_NAMES.indexOf(noteName);
   let semitonesFromA4;
