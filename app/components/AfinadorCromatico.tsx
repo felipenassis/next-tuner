@@ -3,9 +3,11 @@
 import { Diamond } from "lucide-react"
 import { useState, useMemo, useEffect } from "react"
 import useFrequencyAnalyzer from "@/hooks/useFrequencyAnalyzer"
+import useSettings from "@/hooks/useSettings"
 
 export default function AfinadorCromatico() {
   const [scale, setScale] = useState<number>(0)
+  const { settings } = useSettings()
 
   const {
     frequency,
@@ -14,7 +16,7 @@ export default function AfinadorCromatico() {
     octave,
     startListening,
     stopListening
-  } = useFrequencyAnalyzer()
+  } = useFrequencyAnalyzer(settings.tuning, settings.algorithm)
 
   const mapearParaEscala = (cents: number): number => {
     // Mapeia o número de [-50, 50] para [1, 9]
