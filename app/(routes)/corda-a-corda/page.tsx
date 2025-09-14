@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTonePlayer } from '@/hooks/useTonePlayer';
-import String, { StringColor } from '@/app/components/String';
+import String, { StringColor } from '@/components/String';
 import { calculateFrequency } from '@/lib/utils';
 
 type Instrument = 'guitar' | 'violin' | 'cello' | 'bass' | 'ukulele' | 'cavaco';

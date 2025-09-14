@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import Slider from '@/app/components/Slider';
+import Slider from '@/components/Slider';
 import { useTonePlayer } from '@/hooks/useTonePlayer';
 
 // Tipos e constantes
