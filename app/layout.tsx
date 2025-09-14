@@ -6,8 +6,8 @@ import TabPanel from '@/app/components/TabPanel'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Seu Aplicativo',
-  description: 'Descrição do seu aplicativo',
+  title: 'Next tuner',
+  description: 'Projeto de afinador de instrumentos de corda usando Next.js',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
