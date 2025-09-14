@@ -1,2 +1,113 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =====================================
+   THEME: usando as cores do Tailwind
+   ===================================== */
+@theme {
+  /* BASE */
+  --color-background: theme(colors.gray.50);       /* Fundo geral */
+  --color-foreground: theme(colors.gray.900);      /* Texto padrão */
+  --color-border: theme(colors.gray.200);          /* Bordas suaves */
+  --color-border-strong: theme(colors.gray.300);   /* Bordas fortes */
+
+  /* SURFACES */
+  --color-surface: theme(colors.white);            /* Cards, modais */
+  --color-surface-muted: theme(colors.gray.100);   /* Fundo alternativo */
+
+  /* MUTED (placeholders, tooltips, etc) */
+  --color-muted: theme(colors.gray.500);
+  --color-muted-foreground: theme(colors.gray.600);
+
+  /* PRIMARY (Ações principais) */
+  --color-primary: theme(colors.blue.600);
+  --color-primary-hover: theme(colors.blue.700);
+  --color-primary-active: theme(colors.blue.800);
+  --color-primary-foreground: theme(colors.white);
+
+  /* SECONDARY (Ações secundárias, botões neutros) */
+  --color-secondary: theme(colors.gray.200);
+  --color-secondary-hover: theme(colors.gray.300);
+  --color-secondary-active: theme(colors.gray.400);
+  --color-secondary-foreground: theme(colors.gray.900);
+
+  /* ACCENT (detalhes visuais ou interações sutis) */
+  --color-accent: theme(colors.purple.500);
+  --color-accent-hover: theme(colors.purple.600);
+  --color-accent-foreground: theme(colors.white);
+
+  /* FEEDBACK - mensagens */
+  --color-info: theme(colors.sky.500);
+  --color-info-foreground: theme(colors.white);
+
+  --color-success: theme(colors.green.600);
+  --color-success-foreground: theme(colors.white);
+
+  --color-warning: theme(colors.amber.500);
+  --color-warning-foreground: theme(colors.black);
+
+  --color-danger: theme(colors.red.600);
+  --color-danger-foreground: theme(colors.white);
+
+  /* DISABLED */
+  --color-disabled: theme(colors.gray.300);
+  --color-disabled-foreground: theme(colors.gray.500);
+}
+
+/* =====================================
+   THEME - DARK MODE
+   ===================================== */
+.dark {
+  /* BASE */
+  --color-background: theme(colors.gray.900);
+  --color-foreground: theme(colors.gray.50);
+  --color-border: theme(colors.gray.700);
+  --color-border-strong: theme(colors.gray.600);
+
+  /* SURFACES */
+  --color-surface: theme(colors.gray.800);
+  --color-surface-muted: theme(colors.gray.700);
+
+  /* MUTED */
+  --color-muted: theme(colors.gray.400);
+  --color-muted-foreground: theme(colors.gray.300);
+
+  /* PRIMARY */
+  --color-primary: theme(colors.blue.500);
+  --color-primary-hover: theme(colors.blue.400);
+  --color-primary-active: theme(colors.blue.300);
+  --color-primary-foreground: theme(colors.white);
+
+  /* SECONDARY */
+  --color-secondary: theme(colors.gray.700);
+  --color-secondary-hover: theme(colors.gray.600);
+  --color-secondary-active: theme(colors.gray.500);
+  --color-secondary-foreground: theme(colors.gray.100);
+
+  /* ACCENT */
+  --color-accent: theme(colors.purple.400);
+  --color-accent-hover: theme(colors.purple.300);
+  --color-accent-foreground: theme(colors.white);
+
+  /* FEEDBACK */
+  --color-info: theme(colors.sky.400);
+  --color-info-foreground: theme(colors.black);
+
+  --color-success: theme(colors.green.500);
+  --color-success-foreground: theme(colors.white);
+
+  --color-warning: theme(colors.amber.400);
+  --color-warning-foreground: theme(colors.black);
+
+  --color-danger: theme(colors.red.500);
+  --color-danger-foreground: theme(colors.white);
+
+  /* DISABLED */
+  --color-disabled: theme(colors.gray.700);
+  --color-disabled-foreground: theme(colors.gray.500);
+}

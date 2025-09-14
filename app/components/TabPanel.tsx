@@ -44,7 +44,7 @@ export default function TabPanel() {
   }
 
   return (
-    <div className="flex items-center justify-center bg-gray-100 dark:bg-gray-800 p-1">
+    <div className="flex items-center justify-center bg-background-muted p-1">
       <nav className="flex space-x-1" aria-label="Tabs">
         {tabs.map((tab) => {
           const active = isActive(tab.path)
@@ -54,11 +54,11 @@ export default function TabPanel() {
               href={tab.path}
               className={`flex flex-col sm:flex-row gap-2 items-center px-4 py-2 text-xs sm:text-sm text-center font-medium rounded-md transition-all duration-200 relative ${
                 active
-                  ? 'text-indigo-600 dark:text-indigo-400 bg-white dark:bg-gray-700 font-semibold'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  ? 'text-primary bg-background-disabled font-semibold'
+                  : 'text-foreground-muted hover:text-foreground hover:bg-background-disabled'
               }`}
             >
-              <span className={active ? 'text-indigo-600 dark:text-indigo-400' : ''}>
+              <span className={active ? 'text-primary' : ''}>
                 {tab.icon}
               </span>
               {tab.name}

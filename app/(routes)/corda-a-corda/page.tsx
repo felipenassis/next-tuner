@@ -98,10 +98,10 @@ const InstrumentTuner = () => {
 
   return (
     <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden p-6">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+      <div className="max-w-md mx-auto bg-surface rounded-xl shadow-md overflow-hidden p-6">
+        <h1 className="text-2xl font-bold text-foreground mb-6">
           Afinador de Instrumentos
-          <span className="block text-sm font-normal mt-1 text-gray-600 dark:text-gray-300">
+          <span className="block text-sm font-normal mt-1 text-muted-foreground">
             Afinação padrão: A4 = {tuningA4}Hz
           </span>
         </h1>
@@ -109,14 +109,14 @@ const InstrumentTuner = () => {
         <div className="space-y-6">
           {/* Seletor de Instrumento */}
           <div>
-            <label htmlFor="instrument" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="instrument" className="block text-sm font-medium text-foreground mb-1">
               Instrumento
             </label>
             <select
               id="instrument"
               value={instrument}
               onChange={(e) => setInstrument(e.target.value as Instrument)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+              className="w-full px-3 py-2 border border-border-strong dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
             >
               <option value="guitar">Violão/Guitarra</option>
               <option value="violin">Violino</option>
@@ -136,7 +136,7 @@ const InstrumentTuner = () => {
               id="tuningType"
               value={tuningType}
               onChange={(e) => setTuningType(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+              className="w-full px-3 py-2 border border-border-strong dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
             >
               {Object.keys(INSTRUMENT_TUNINGS[instrument]).map(tuning => (
                 <option key={tuning} value={tuning}>

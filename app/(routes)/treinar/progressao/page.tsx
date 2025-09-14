@@ -145,11 +145,11 @@ export default function ChordEarTraining() {
             <div 
               key={index}
               className={`w-12 h-12 rounded-md flex items-center justify-center text-lg font-bold
-                ${isRevealed ? 'bg-blue-500 text-white' : ''}
-                ${isAnswer && !showResult ? 'bg-gray-300 text-gray-800' : ''}
+                ${isRevealed ? 'bg-info text-foreground' : ''}
+                ${isAnswer && !showResult ? 'bg-background-disabled hover:bg-background-disabled' : ''}
                 ${isAnswer && showResult ? 
                   (currentProgression.chords[index].name === userAnswer ? 
-                    'bg-green-500 text-white' : 'bg-red-500 text-white') : ''}
+                    'bg-success text-foreground' : 'bg-error text-foreground') : ''}
               `}
             >
               {isRevealed ? chord.name : 
@@ -164,7 +164,7 @@ export default function ChordEarTraining() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+      <div className="bg-background-muted rounded-lg shadow-lg p-6 w-full max-w-md">
         <h1 className="text-2xl font-bold text-center mb-6">Exercício de Audição Musical</h1>
         
         <div className="mb-6">
@@ -176,8 +176,8 @@ export default function ChordEarTraining() {
                 onClick={() => setDifficulty(level)}
                 className={`px-4 py-2 rounded-md ${
                   difficulty === level
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 hover:bg-gray-300'
+                    ? 'bg-info text-foreground'
+                    : 'bg-background-disabled hover:bg-background-disabled'
                 }`}
               >
                 {level === 'easy' ? 'Fácil' : level === 'medium' ? 'Médio' : 'Difícil'}
@@ -190,7 +190,7 @@ export default function ChordEarTraining() {
           <h2 className="text-lg font-semibold mb-2">Progressão de Acordes:</h2>
           {currentProgression && (
             <div className="mb-4">
-              <p className="text-gray-700 mb-2 text-center">
+              <p className="mb-2 text-center">
                 {difficulty === 'easy' ? 'Ouça os 3 acordes e identifique o último' : 
                  difficulty === 'medium' ? 'Ouça os 4 acordes e identifique os 2 últimos' : 
                  'Ouça os 5 acordes e identifique os 2 últimos'}
@@ -201,7 +201,7 @@ export default function ChordEarTraining() {
               <button
                 onClick={playProgression}
                 disabled={isPlaying}
-                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400 w-full"
+                className="bg-success text-foreground px-4 py-2 rounded-md hover:bg-success disabled:bg-background-disabled w-full"
               >
                 {isPlaying ? 'Tocando...' : 'Tocar Progressão'}
               </button>
@@ -217,7 +217,7 @@ export default function ChordEarTraining() {
                 key={chordName}
                 onClick={() => handleAnswer(chordName)}
                 disabled={showResult || userAnswers.length >= currentProgression?.answerIndices.length || !currentProgression}
-                className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md disabled:opacity-50"
+                className="bg-background hover:bg-background px-4 py-2 rounded-md disabled:opacity-50"
               >
                 {chordName}
               </button>
@@ -227,7 +227,7 @@ export default function ChordEarTraining() {
         
         {showResult && (
           <div className={`p-4 rounded-md mb-4 ${
-            isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+            isCorrect ? 'bg-success text-foreground' : 'bg-success text-foreground'
           }`}>
             <p className="font-semibold">
               {isCorrect ? '✅ Correto!' : '❌ Incorreto!'}
@@ -241,7 +241,7 @@ export default function ChordEarTraining() {
         
         <button
           onClick={startNewGame}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 w-full"
+          className="bg-info text-white px-4 py-2 rounded-md hover:bg-blue-700 w-full"
         >
           Novo Exercício
         </button>
