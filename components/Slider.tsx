@@ -8,6 +8,7 @@ interface SliderProps {
   onChange: (value: number) => void;
   label?: string;
   unit?: string;
+  hideValue?: boolean;
   className?: string;
 }
 
@@ -18,6 +19,7 @@ const Slider: React.FC<SliderProps> = ({
   value,
   onChange,
   label,
+  hideValue = false,
   unit = '',
   className = '',
 }) => {
@@ -41,7 +43,7 @@ const Slider: React.FC<SliderProps> = ({
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             {label}
           </label>
-          <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          <span className={`${!hideValue || 'hidden'} text-sm font-semibold text-gray-700 dark:text-gray-300`}>
             {sliderValue.toFixed(step < 1 ? 2 : 0)}{unit}
           </span>
         </div>
@@ -55,12 +57,11 @@ const Slider: React.FC<SliderProps> = ({
         value={sliderValue}
         onChange={handleChange}
         className={`
-          w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer
+          w-full h-2 bg-disabled rounded-lg appearance-none cursor-pointer
           [&::-webkit-slider-thumb]:appearance-none
           [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4
           [&::-webkit-slider-thumb]:rounded-full
-          [&::-webkit-slider-thumb]:bg-indigo-600
-          [&::-webkit-slider-thumb]:dark:bg-indigo-400
+          [&::-webkit-slider-thumb]:bg-primary
           [&::-webkit-slider-thumb]:hover:scale-125
           [&::-webkit-slider-thumb]:transition-transform
         `}

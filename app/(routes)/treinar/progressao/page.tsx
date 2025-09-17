@@ -149,7 +149,7 @@ export default function ChordEarTraining() {
                 ${isAnswer && !showResult ? 'bg-background-disabled hover:bg-background-disabled' : ''}
                 ${isAnswer && showResult ? 
                   (currentProgression.chords[index].name === userAnswer ? 
-                    'bg-success text-foreground' : 'bg-error text-foreground') : ''}
+                    'bg-success text-foreground' : 'bg-danger text-foreground') : ''}
               `}
             >
               {isRevealed ? chord.name : 
@@ -164,36 +164,30 @@ export default function ChordEarTraining() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="bg-background-muted rounded-lg shadow-lg p-6 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6">Exercício de Audição Musical</h1>
-        
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-2">Dificuldade:</h2>
-          <div className="flex gap-2">
-            {(['easy', 'medium', 'hard'] as Difficulty[]).map((level) => (
-              <button
-                key={level}
-                onClick={() => setDifficulty(level)}
-                className={`px-4 py-2 rounded-md ${
-                  difficulty === level
-                    ? 'bg-info text-foreground'
-                    : 'bg-background-disabled hover:bg-background-disabled'
-                }`}
-              >
-                {level === 'easy' ? 'Fácil' : level === 'medium' ? 'Médio' : 'Difícil'}
-              </button>
-            ))}
-          </div>
+      <div className="bg-surface rounded-lg shadow-lg p-6 w-full max-w-md flex flex-col gap-8">
+        <div>
+          <label htmlFor="difficulty" className="block text-sm font-medium mb-1 text-muted-foreground">
+            Dificuldade
+          </label>
+          <select
+            id="difficulty"
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+            className="w-full px-3 py-2 border border-border-strong rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary bg-surface-muted text-foreground"
+          >
+            <option value="easy">Fácil</option>
+            <option value="medium">Médio</option>
+            <option value="hard">Difícil</option>
+          </select>
         </div>
         
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-2">Progressão de Acordes:</h2>
+        <div>
           {currentProgression && (
-            <div className="mb-4">
-              <p className="mb-2 text-center">
-                {difficulty === 'easy' ? 'Ouça os 3 acordes e identifique o último' : 
-                 difficulty === 'medium' ? 'Ouça os 4 acordes e identifique os 2 últimos' : 
-                 'Ouça os 5 acordes e identifique os 2 últimos'}
+            <div>
+              <p className="font-semibold mb-2">
+                {difficulty === 'easy' ? '1. Ouça os 3 acordes e identifique o último:' : 
+                 difficulty === 'medium' ? '1. Ouça os 4 acordes e identifique os 2 últimos:' : 
+                 '1. Ouça os 5 acordes e identifique os 2 últimos:'}
               </p>
               
               {renderChordSequence()}
@@ -201,7 +195,7 @@ export default function ChordEarTraining() {
               <button
                 onClick={playProgression}
                 disabled={isPlaying}
-                className="bg-success text-foreground px-4 py-2 rounded-md hover:bg-success disabled:bg-background-disabled w-full"
+                className="bg-accent text-foreground px-4 py-2 rounded-md hover:cursor-pointer disabled:bg-disabled w-full"
               >
                 {isPlaying ? 'Tocando...' : 'Tocar Progressão'}
               </button>
@@ -209,15 +203,15 @@ export default function ChordEarTraining() {
           )}
         </div>
         
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-2">Selecione os acordes que você ouviu:</h2>
+        <div>
+          <h2 className="font-semibold mb-2">2. Selecione os acordes que você ouviu:</h2>
           <div className="grid grid-cols-2 gap-2">
             {Object.keys(CHORDS).map((chordName) => (
               <button
                 key={chordName}
                 onClick={() => handleAnswer(chordName)}
                 disabled={showResult || userAnswers.length >= currentProgression?.answerIndices.length || !currentProgression}
-                className="bg-background hover:bg-background px-4 py-2 rounded-md disabled:opacity-50"
+                className="bg-surface-muted hover:cursor-pointer px-4 py-2 rounded-md disabled:bg-disabled"
               >
                 {chordName}
               </button>
@@ -226,11 +220,11 @@ export default function ChordEarTraining() {
         </div>
         
         {showResult && (
-          <div className={`p-4 rounded-md mb-4 ${
-            isCorrect ? 'bg-success text-foreground' : 'bg-success text-foreground'
+          <div className={`p-4 rounded-md mb-4 text-foreground ${
+            isCorrect ? 'bg-success' : 'bg-danger'
           }`}>
             <p className="font-semibold">
-              {isCorrect ? '✅ Correto!' : '❌ Incorreto!'}
+              {isCorrect ? 'Correto!' : 'Incorreto!'}
             </p>
             <p>
               Resposta correta: {currentProgression.answerIndices.map(i => currentProgression.chords[i].name).join(' e ')}
@@ -241,7 +235,7 @@ export default function ChordEarTraining() {
         
         <button
           onClick={startNewGame}
-          className="bg-info text-white px-4 py-2 rounded-md hover:bg-blue-700 w-full"
+          className="bg-primary text-foreground px-4 py-2 rounded-md hover:cursor-pointer w-full"
         >
           Novo Exercício
         </button>

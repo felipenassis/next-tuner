@@ -97,15 +97,8 @@ const InstrumentTuner = () => {
   };
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="flex flex-row flex-grow justify-center items-center">
       <div className="max-w-md mx-auto bg-surface rounded-xl shadow-md overflow-hidden p-6">
-        <h1 className="text-2xl font-bold text-foreground mb-6">
-          Afinador de Instrumentos
-          <span className="block text-sm font-normal mt-1 text-muted-foreground">
-            Afinação padrão: A4 = {tuningA4}Hz
-          </span>
-        </h1>
-        
         <div className="space-y-6">
           {/* Seletor de Instrumento */}
           <div>
@@ -141,12 +134,12 @@ const InstrumentTuner = () => {
               {Object.keys(INSTRUMENT_TUNINGS[instrument]).map(tuning => (
                 <option key={tuning} value={tuning}>
                   {tuning === 'standard' ? 'Padrão' : 
-                   tuning === 'dropD' ? 'Drop D' :
-                   tuning === 'openG' ? 'Open G' :
-                   tuning === 'halfStepDown' ? 'Meio tom abaixo' :
-                   tuning === 'fiveString' ? '5 cordas' :
-                   tuning === 'sixString' ? '6 cordas' :
-                   tuning === 'baritone' ? 'Barítono' : tuning}
+                  tuning === 'dropD' ? 'Drop D' :
+                  tuning === 'openG' ? 'Open G' :
+                  tuning === 'halfStepDown' ? 'Meio tom abaixo' :
+                  tuning === 'fiveString' ? '5 cordas' :
+                  tuning === 'sixString' ? '6 cordas' :
+                  tuning === 'baritone' ? 'Barítono' : tuning}
                 </option>
               ))}
             </select>
@@ -172,14 +165,8 @@ const InstrumentTuner = () => {
           </div>
           
           {/* Dicas de Afinação */}
-          <div className="mt-6 p-4 bg-blue-50 dark:bg-gray-700 rounded-lg">
-            <h3 className="font-medium text-gray-800 dark:text-white mb-2">Dicas de Afinação:</h3>
-            <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300 space-y-1">
-              <li>Toque a corda e ajuste até o som coincidir com a referência</li>
-              <li>Comece pelas cordas mais graves e vá para as agudas</li>
-              <li>Verifique a afinação em diferentes posições do braço</li>
-              <li>Ambientes muito frios ou quentes podem alterar a afinação</li>
-            </ul>
+          <div>
+            <span>Toque a corda e ajuste até o som coincidir com a referência</span>
           </div>
         </div>
       </div>

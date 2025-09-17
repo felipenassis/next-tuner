@@ -79,9 +79,9 @@ const Treinar = () => {
   // Ajustado para faixas mais amplas (mais fácil)
   const getRangeForDifficulty = (centerFreq: number, difficulty: Difficulty) => {
     const ranges = { 
-      'easy': 0.3,    // 30% de variação (antes era 20%)
-      'medium': 0.2,   // 20% de variação (antes era 15%)
-      'hard': 0.15     // 15% de variação (antes era 10%)
+      'easy': 0.2,    // 30% de variação (antes era 20%)
+      'medium': 0.15,   // 20% de variação (antes era 15%)
+      'hard': 0.10     // 15% de variação (antes era 10%)
     };
     const rangePercent = ranges[difficulty];
     return {
@@ -93,9 +93,9 @@ const Treinar = () => {
   // Ajustado para tolerâncias maiores (mais fácil)
   const getToleranceForDifficulty = (): number => {
     const tolerances = { 
-      'easy': 3.0,    // ±3.0 Hz (antes era ±2.0 Hz)
-      'medium': 1.5,  // ±1.5 Hz (antes era ±1.0 Hz)
-      'hard': 0.8     // ±0.8 Hz (antes era ±0.5 Hz)
+      'easy': 4.0,    // ±3.0 Hz (antes era ±2.0 Hz)
+      'medium': 2.0,  // ±1.5 Hz (antes era ±1.0 Hz)
+      'hard': 1     // ±0.8 Hz (antes era ±0.5 Hz)
     };
     return tolerances[difficulty];
   };
@@ -176,41 +176,30 @@ const Treinar = () => {
   };
 
   return (
-    <div className="p-6 max-w-md mx-auto">
-      <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-md mx-auto">
-        <h1 className="text-2xl font-bold mb-4 dark:text-white">Treino de Afinação</h1>
-        
-        <div className="mb-4 flex justify-between items-center">
-          <div>
-            <label htmlFor="difficulty" className="block text-sm font-medium mb-1 dark:text-gray-300">
-              Dificuldade
-            </label>
-            <select
-              id="difficulty"
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value as Difficulty)}
-              className="p-2 border rounded dark:bg-gray-700 dark:text-white"
-            >
-              <option value="easy">Fácil</option>
-              <option value="medium">Médio</option>
-              <option value="hard">Difícil</option>
-            </select>
-          </div>
-          
-          <div className="text-right">
-            <div className="text-lg font-bold dark:text-white">Pontos: {score}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-300">
-              Acertos: {successCount}/{attempts} ({attempts > 0 ? Math.round((successCount / attempts) * 100) : 0}%)
-            </div>
-          </div>
+    <div className="flex flex-row flex-grow justify-center items-center">
+      <div className="p-6 bg-surface rounded-lg shadow-lg min-w-md mx-auto flex flex-col gap-8">
+        <div>
+          <label htmlFor="difficulty" className="block text-sm font-medium mb-1 text-muted-foreground">
+            Dificuldade
+          </label>
+          <select
+            id="difficulty"
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+            className="w-full px-3 py-2 border border-border-strong rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary bg-surface-muted text-foreground"
+          >
+            <option value="easy">Fácil</option>
+            <option value="medium">Médio</option>
+            <option value="hard">Difícil</option>
+          </select>
         </div>
         
-        <div className="mb-6 p-4 bg-blue-50 dark:bg-gray-700 rounded-lg">
-          <p className="text-lg dark:text-white">
+        <div className="p-4 bg-surface-muted rounded-lg">
+          <p className="text-lg text-muted-foreground">
             Nota alvo: <span className="font-bold">{targetNote.formattedName}</span>
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            Afinação: A4 = {tuning}Hz | Frequência: {targetNote.frequency.toFixed(2)}Hz | Margem: ±{getToleranceForDifficulty().toFixed(1)}Hz
+          <p className="text-sm text-muted-foreground">
+            Frequência: {targetNote.frequency.toFixed(2)}Hz | Margem: ±{getToleranceForDifficulty().toFixed(1)}Hz
           </p>
         </div>
         
@@ -218,15 +207,15 @@ const Treinar = () => {
           <div className="flex space-x-2">
             <button
               onClick={() => playTone(targetNote.frequency, 2)}
-              className="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded"
+              className="flex-1 py-2 bg-primary hover:bg-primary-hover text-foreground rounded"
             >
-              Ouvir Nota Alvo (2s)
+              Ouvir Nota Alvo
             </button>
             <button
               onClick={() => playTone(sliderValue, 2)}
-              className="flex-1 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded"
+              className="flex-1 py-2 bg-accent hover:bg-accent-hover text-foreground rounded"
             >
-              Ouvir Nota do Slider (2s)
+              Ouvir Nota do Slider
             </button>
           </div>
           
@@ -236,17 +225,18 @@ const Treinar = () => {
             max={sliderRange.max}
             step={0.1}
             value={sliderValue}
+            hideValue
             onChange={setSliderValue}
           />
           
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center hidden">
             <span className="text-sm text-gray-600 dark:text-gray-300">
               Sua frequência: {sliderValue.toFixed(2)} Hz
             </span>
             <span className={`text-sm ${
               Math.abs(sliderValue - targetNote.frequency) <= getToleranceForDifficulty()
-                ? 'text-green-600 dark:text-green-400'
-                : 'text-red-600 dark:text-red-400'
+                ? 'text-success'
+                : 'text-danger'
             }`}>
               Diferença: {(sliderValue - targetNote.frequency).toFixed(2)} Hz
             </span>
@@ -256,8 +246,8 @@ const Treinar = () => {
             onClick={handleCheckAnswer}
             className={`w-full py-3 rounded-md font-bold text-white ${
               isCorrect 
-                ? 'bg-green-600 hover:bg-green-700'
-                : 'bg-blue-600 hover:bg-blue-700'
+                ? 'bg-success'
+                : 'bg-primary'
             }`}
           >
             {isCorrect ? '✓ Correto! Próximo desafio...' : 'Verificar Resposta'}

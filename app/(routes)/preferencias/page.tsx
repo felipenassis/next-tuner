@@ -12,7 +12,7 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-row flex-grow justify-center items-center">
-      <div className="max-w-md mx-auto bg-background-muted rounded-xl shadow-md overflow-hidden p-6 space-y-6">
+      <div className="max-w-md mx-auto bg-surface rounded-xl shadow-md overflow-hidden p-6 space-y-6">
         
         {/* Tema */}
         <div>
@@ -23,7 +23,7 @@ export default function SettingsPage() {
             id="theme"
             value={settings.theme}
             onChange={(e) => handleThemeChange(e.target.value as Theme)}
-            className="w-full px-3 py-2 border border-border-strong rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+            className="w-full px-3 py-2 border border-border-strong rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary bg-surface-muted text-foreground"
           >
             <option value="system">Mesmo do sistema</option>
             <option value="light">Claro</option>
@@ -40,7 +40,7 @@ export default function SettingsPage() {
             id="algorithm"
             value={settings.algorithm}
             onChange={(e) => updateSetting('algorithm', e.target.value as Algorithm)}
-            className="w-full px-3 py-2 border border-border-strong rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+            className="w-full px-3 py-2 border border-border-strong rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary bg-surface-muted text-foreground"
           >
             <option value="YIN">YIN</option>
             <option value="MPM">MPM (McLeod Pitch Method)</option>
@@ -56,7 +56,7 @@ export default function SettingsPage() {
             id="tuning"
             value={settings.tuning}
             onChange={(e) => updateSetting('tuning', e.target.value as Tuning)}
-            className="w-full px-3 py-2 border border-border-strong rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+            className="w-full px-3 py-2 border border-border-strong rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary bg-surface-muted text-foreground"
           >
             <option value="440">A = 440 Hz (Padrão moderno)</option>
             <option value="432">A = 432 Hz (Afinação científica)</option>
