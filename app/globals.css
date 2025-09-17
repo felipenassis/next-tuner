@@ -11,14 +11,14 @@
    ===================================== */
 @theme {
   /* BASE */
-  --color-background: theme(colors.gray.50);       /* Fundo geral */
+  --color-background: theme(colors.slate.900);       /* Fundo geral */
   --color-foreground: theme(colors.gray.900);      /* Texto padrão */
   --color-border: theme(colors.gray.200);          /* Bordas suaves */
   --color-border-strong: theme(colors.gray.300);   /* Bordas fortes */
 
   /* SURFACES */
-  --color-surface: theme(colors.white);            /* Cards, modais */
-  --color-surface-muted: theme(colors.gray.100);   /* Fundo alternativo */
+  --color-surface: theme(colors.slate.50);            /* Cards, modais */
+  --color-surface-muted: theme(colors.slate.100);   /* Fundo alternativo */
 
   /* MUTED (placeholders, tooltips, etc) */
   --color-muted: theme(colors.gray.500);

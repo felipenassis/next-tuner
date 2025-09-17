@@ -145,11 +145,11 @@ export default function ChordEarTraining() {
             <div 
               key={index}
               className={`w-12 h-12 rounded-md flex items-center justify-center text-lg font-bold
-                ${isRevealed ? 'bg-info text-foreground' : ''}
+                ${isRevealed ? 'bg-info text-info-foreground' : ''}
                 ${isAnswer && !showResult ? 'bg-background-disabled hover:bg-background-disabled' : ''}
                 ${isAnswer && showResult ? 
                   (currentProgression.chords[index].name === userAnswer ? 
-                    'bg-success text-foreground' : 'bg-danger text-foreground') : ''}
+                    'bg-success text-success-foreground' : 'bg-danger text-danger-foreground') : ''}
               `}
             >
               {isRevealed ? chord.name : 
@@ -195,7 +195,7 @@ export default function ChordEarTraining() {
               <button
                 onClick={playProgression}
                 disabled={isPlaying}
-                className="bg-accent text-foreground px-4 py-2 rounded-md hover:cursor-pointer disabled:bg-disabled w-full"
+                className="bg-accent text-accent-foreground px-4 py-2 rounded-md hover:cursor-pointer disabled:bg-disabled w-full"
               >
                 {isPlaying ? 'Tocando...' : 'Tocar Progressão'}
               </button>
@@ -235,7 +235,7 @@ export default function ChordEarTraining() {
         
         <button
           onClick={startNewGame}
-          className="bg-primary text-foreground px-4 py-2 rounded-md hover:cursor-pointer w-full"
+          className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:cursor-pointer w-full"
         >
           Novo Exercício
         </button>

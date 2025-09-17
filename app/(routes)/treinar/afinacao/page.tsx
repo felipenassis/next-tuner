@@ -207,13 +207,13 @@ const Treinar = () => {
           <div className="flex space-x-2">
             <button
               onClick={() => playTone(targetNote.frequency, 2)}
-              className="flex-1 py-2 bg-primary hover:bg-primary-hover text-foreground rounded"
+              className="flex-1 py-2 bg-primary hover:bg-primary-hover text-primary-foreground rounded"
             >
               Ouvir Nota Alvo
             </button>
             <button
               onClick={() => playTone(sliderValue, 2)}
-              className="flex-1 py-2 bg-accent hover:bg-accent-hover text-foreground rounded"
+              className="flex-1 py-2 bg-accent hover:bg-accent-hover text-accent-foreground rounded"
             >
               Ouvir Nota do Slider
             </button>
