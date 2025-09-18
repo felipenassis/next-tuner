@@ -97,7 +97,7 @@
   /* FEEDBACK */
   --color-info: theme(colors.sky.400);
   --color-info-hover: theme(colors.sky.300);
-  --color-info-foreground: theme(colors.black);
+  --color-info-foreground: theme(colors.white);
 
   --color-success: theme(colors.green.500);
   --color-success-hover: theme(colors.green.400);
