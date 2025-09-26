@@ -114,7 +114,6 @@ const Treinar = () => {
   // Inicializa afinação e gera mapa de notas
   useEffect(() => {
     const savedTuning = getTuningFromLocalStorage();
-    setTuning(savedTuning);
     setNoteFrequencies(generateNoteFrequencyMap(savedTuning));
   }, []);
 
