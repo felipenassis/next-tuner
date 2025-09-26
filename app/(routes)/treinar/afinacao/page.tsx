@@ -24,7 +24,6 @@ const Treinar = () => {
   const [attempts, setAttempts] = useState(0);
   const [successCount, setSuccessCount] = useState(0);
   const [score, setScore] = useState(0);
-  const [tuning, setTuning] = useState(DEFAULT_TUNING);
   const [noteFrequencies, setNoteFrequencies] = useState<NoteFrequencyMap>({});
   const [targetNote, setTargetNote] = useState<NoteInfo>({ name: '', formattedName: '', frequency: 0 });
   const [sliderRange, setSliderRange] = useState({ min: 0, max: 0 });

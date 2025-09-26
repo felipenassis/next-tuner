@@ -58,14 +58,12 @@ const getTuningFromLocalStorage = (): number => {
 const InstrumentTuner = () => {
   const [instrument, setInstrument] = useState<Instrument>('guitar');
   const [tuningType, setTuningType] = useState('standard');
-  const [tuningA4, setTuningA4] = useState(440);
   const [strings, setStrings] = useState<StringConfig[]>([]);
   const { playTone, stopTone } = useTonePlayer();
 
   // Carrega a afinação e atualiza quando instrumento ou afinação muda
   useEffect(() => {
     const savedTuning = getTuningFromLocalStorage();
-    setTuningA4(savedTuning);
     
     const instrumentTunings = INSTRUMENT_TUNINGS[instrument];
     if (!instrumentTunings || !instrumentTunings[tuningType]) return;

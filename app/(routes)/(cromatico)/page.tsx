@@ -1,7 +1,7 @@
 'use client'
 
 import { Diamond } from "lucide-react"
-import { useState, useMemo, useEffect } from "react"
+import { useState, useEffect } from "react"
 import useFrequencyAnalyzer from "@/hooks/useFrequencyAnalyzer"
 import useSettings from "@/hooks/useSettings"
 
@@ -26,13 +26,9 @@ export default function Cromatico() {
     return Math.max(1, Math.min(9, valorMapeado));
   }
 
-  useMemo(() => {
-    if (cents) {
-      setScale(mapearParaEscala(cents))
-    } else {
-      setScale(0)
-    }
-  }, [frequency])
+  useEffect(() => {
+    setScale(cents ? mapearParaEscala(cents) : 0)
+  }, [cents, frequency])
 
   useEffect(() => {
     startListening()
