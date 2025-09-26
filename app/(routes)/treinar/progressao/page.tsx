@@ -210,7 +210,7 @@ export default function ChordEarTraining() {
               <button
                 key={chordName}
                 onClick={() => handleAnswer(chordName)}
-                disabled={showResult || userAnswers.length >= currentProgression?.answerIndices.length || !currentProgression}
+                disabled={showResult || !currentProgression || userAnswers.length >= currentProgression.answerIndices.length}
                 className="bg-surface-muted hover:cursor-pointer px-4 py-2 rounded-md disabled:bg-disabled"
               >
                 {chordName}
@@ -219,7 +219,7 @@ export default function ChordEarTraining() {
           </div>
         </div>
         
-        {showResult && (
+        {showResult && currentProgression && (
           <div className={`p-4 rounded-md mb-4 text-foreground ${
             isCorrect ? 'bg-success' : 'bg-danger'
           }`}>
