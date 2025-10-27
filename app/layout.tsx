@@ -8,12 +8,16 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Next tuner',
   description: 'Projeto de afinador de instrumentos de corda usando Next.js',
+  manifest: "/manifest.json",
+  themeColor: "#000000"
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/icons/icon-192x192.png" />
         {/* Script para aplicar o tema antes da renderização */}
         <script
           dangerouslySetInnerHTML={{

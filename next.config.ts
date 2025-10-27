@@ -1,7 +1,14 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
+import nextPWA from "next-pwa"
 
 const nextConfig: NextConfig = {
   /* config options here */
 };
 
-export default nextConfig;
+// Exporta a configuração com o wrapper PWA aplicado
+export default nextPWA({
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === "development",
+})(nextConfig);
