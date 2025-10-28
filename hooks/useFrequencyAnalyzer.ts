@@ -15,7 +15,43 @@ type NoteInfo = {
 
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
-const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgorithm: PitchAlgorithm = 'YIN'): NoteInfo => {
+const getStandardFrequency = (standard: TuningStandard): number => {
+  switch (standard) {
+    case '440': return 440.0;
+    case '415': return 415.3;
+    case '392': return 392.0;
+    case '466': return 466.16;
+    case '432': return 432.0;
+    default: return 440.0;
+  }
+};
+
+const getNoteInfo = (
+  freq: number,
+  standard: TuningStandard = '440'
+): { note: string | null; octave: number | null; cents: number | null } => {
+  if (freq <= 0) return { note: null, octave: null, cents: null };
+
+  const A4 = getStandardFrequency(standard);
+  const semitonesFromA4 = 12 * Math.log2(freq / A4);
+  const midiNote = Math.round(semitonesFromA4) + 69;
+  const noteIndex = midiNote % 12;
+  const note = NOTE_NAMES[noteIndex];
+  const octave = Math.floor(midiNote / 12) - 1;
+  const exactFrequency = A4 * Math.pow(2, (midiNote - 69) / 12);
+  const cents = Math.round(1200 * Math.log2(freq / exactFrequency));
+
+  return { 
+    note, 
+    octave: octave < 0 ? null : octave,
+    cents 
+  };
+};
+
+const useFrequencyAnalyzer = (
+  initialTuning: TuningStandard = '440',
+  initialAlgorithm: PitchAlgorithm = 'YIN'
+): NoteInfo => {
   const [frequency, setFrequency] = useState<number>(0);
   const [isListening, setIsListening] = useState<boolean>(false);
   const [algorithm, setAlgorithm] = useState<PitchAlgorithm>(initialAlgorithm);
@@ -25,46 +61,10 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
   const workletNodeRef = useRef<AudioWorkletNode | null>(null);
   const lastUpdateRef = useRef<number>(0);
 
-  const getStandardFrequency = (standard: TuningStandard): number => {
-    switch (standard) {
-      case '440': return 440.0;
-      case '415': return 415.3;
-      case '392': return 392.0;
-      case '466': return 466.16;
-      default: return 440.0;
-    }
-  };
-
-  const getTuningStandard = (): TuningStandard => {
-    const standard = initialTuning as TuningStandard;
-    return standard || 'A440';
-  };
-
-  const getNoteInfo = (freq: number): { note: string | null; octave: number | null; cents: number | null } => {
-    if (freq <= 0) return { note: null, octave: null, cents: null };
-
-    const standard = getTuningStandard();
-    const A4 = getStandardFrequency(standard);
-    
-    const semitonesFromA4 = 12 * Math.log2(freq / A4);
-    const midiNote = Math.round(semitonesFromA4) + 69;
-    const noteIndex = midiNote % 12;
-    const note = NOTE_NAMES[noteIndex];
-    const octave = Math.floor(midiNote / 12) - 1;
-    const exactFrequency = A4 * Math.pow(2, (midiNote - 69) / 12);
-    const cents = Math.round(1200 * Math.log2(freq / exactFrequency));
-    
-    return { 
-      note, 
-      octave: octave < 0 ? null : octave,
-      cents
-    };
-  };
-
   const handleWorkletMessage = useCallback((event: MessageEvent) => {
     const now = Date.now();
     if (now - lastUpdateRef.current < 200) return;
-    
+
     if (event.data.frequency && event.data.frequency > 0) {
       setFrequency(event.data.frequency);
     }
@@ -77,8 +77,7 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      
-      // Carrega e adiciona o Audio Worklet
+
       try {
         await ctx.audioWorklet.addModule('/audio-worklets/pitch-processor.js');
       } catch (error) {
@@ -88,21 +87,13 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
 
       const analyser = ctx.createAnalyser();
       const microphone = ctx.createMediaStreamSource(stream);
-      
-      // Cria o Audio Worklet Node
       const workletNode = new AudioWorkletNode(ctx, 'pitch-processor');
-      
-      // Configura o analisador
+
       analyser.fftSize = 4096;
-      
-      // Conecta os nós: microfone -> analisador -> worklet
       microphone.connect(analyser);
       analyser.connect(workletNode);
-      
-      // Configura o handler de mensagens
+
       workletNode.port.onmessage = handleWorkletMessage;
-      
-      // Envia o algoritmo inicial para o worklet
       workletNode.port.postMessage({ algorithm });
 
       audioContextRef.current = ctx;
@@ -142,7 +133,6 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
     lastUpdateRef.current = 0;
   }, [isListening]);
 
-  // Atualiza o algoritmo no worklet quando ele mudar
   useEffect(() => {
     if (workletNodeRef.current && isListening) {
       workletNodeRef.current.port.postMessage({ algorithm });
@@ -155,7 +145,7 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
     };
   }, [stopListening]);
 
-  const noteInfo = getNoteInfo(frequency);
+  const noteInfo = getNoteInfo(frequency, initialTuning);
 
   return {
     frequency,
@@ -170,3 +160,6 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
 };
 
 export default useFrequencyAnalyzer;
+
+// utilitários de teste
+export const __testUtils = { getNoteInfo, NOTE_NAMES };
