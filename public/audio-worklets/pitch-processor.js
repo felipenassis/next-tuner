@@ -18,12 +18,13 @@ class PitchProcessor extends AudioWorkletProcessor {
     const yinThreshold = 0.1;
     const yinBuffer = new Array(Math.floor(buffer.length / 2)).fill(0);
 
+    // yinBuffer.length é sempre metade de buffer.length, então "i + tau"
+    // nunca alcança buffer.length aqui (o teste condicional original era
+    // sempre verdadeiro e só custava um branch extra por iteração).
     for (let tau = 0; tau < yinBuffer.length; tau++) {
       for (let i = 0; i < yinBuffer.length; i++) {
-        if (i + tau < buffer.length) {
-          const delta = buffer[i] - buffer[i + tau];
-          yinBuffer[tau] += delta * delta;
-        }
+        const delta = buffer[i] - buffer[i + tau];
+        yinBuffer[tau] += delta * delta;
       }
     }
 
@@ -61,8 +62,13 @@ class PitchProcessor extends AudioWorkletProcessor {
   }
 
   detectPitchMPM(buffer, sampleRate) {
-    const NSDF = new Array(buffer.length).fill(0);
-    const maxShift = buffer.length;
+    // Limita a busca a frequências plausíveis para os instrumentos deste app
+    // (a nota mais grave usada, o B0 do baixo de 5 cordas, fica perto de
+    // 27.5Hz mesmo no padrão de afinação mais baixo oferecido, 392Hz).
+    // Buscar periodicidade abaixo de 20Hz só desperdiça tempo do audio thread.
+    const MIN_FREQUENCY = 20;
+    const maxShift = Math.min(buffer.length, Math.ceil(sampleRate / MIN_FREQUENCY));
+    const NSDF = new Array(maxShift).fill(0);
 
     for (let tau = 0; tau < maxShift; tau++) {
       let acf = 0;
