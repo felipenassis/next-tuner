@@ -18,7 +18,12 @@ pnpm start         # run production build
 pnpm lint          # next lint (eslint.config.mjs -> next/core-web-vitals, next/typescript)
 ```
 
-There is no test suite/config in this repo (no jest/vitest/playwright). Don't assume one exists.
+```bash
+pnpm test          # run the Vitest suite once (lib/, hooks/, components/)
+pnpm test:watch    # Vitest in watch mode
+```
+
+Tests use **Vitest** (`vitest.config.ts`, jsdom environment, setup in `vitest.setup.ts`) + **React Testing Library** for hook/component tests. Colocated as `*.test.ts(x)` next to the source they cover. CI (`.github/workflows/ci.yml`) runs `pnpm lint`, `pnpm test`, and `pnpm build` on push/PR to `main`.
 
 ## Architecture
 
@@ -32,24 +37,30 @@ There is no test suite/config in this repo (no jest/vitest/playwright). Don't as
 - `app/(routes)/preferencias/page.tsx` — settings page (theme, pitch-detection algorithm, tuning standard).
 - `app/layout.tsx` renders `TabPanel` (bottom/top nav, active-tab logic keyed off `usePathname`) around every route, and inlines a pre-hydration `<script>` that reads `localStorage.appSettings` to set the `dark` class before paint (avoids a flash of wrong theme). Any change to the settings storage shape must be mirrored here.
 
-### Settings: single source of truth, no context provider
+### Settings: single source of truth via React Context
 
-`hooks/useSettings.ts` owns `{ theme, algorithm, tuning }`, persisted to `localStorage` under key `appSettings`. There is **no** React context — every component that needs settings either calls `useSettings()` directly (chromatic tuner) or independently reads/parses `localStorage.getItem('appSettings')` itself (see the duplicated `getTuningFromLocalStorage` helpers in `corda-a-corda/page.tsx` and `treinar/afinacao/page.tsx`, and inline parsing in `treinar/progressao/page.tsx`). When changing the settings shape, grep for `appSettings` and update every reader, not just the hook.
+`hooks/useSettings.tsx` exports a `SettingsProvider` (wraps the app in `app/layout.tsx`) plus the `useSettings()` hook, which reads from that context — calling `useSettings()` outside the provider throws. Settings (`{ theme, algorithm, tuning }`) persist to `localStorage` under key `appSettings`; the provider is the only thing that reads/writes it (aside from the pre-hydration `<script>` in `app/layout.tsx`, which unavoidably reads it directly before React mounts, to avoid a flash of the wrong theme). Every page consumes `useSettings()` — none of them read `localStorage` directly anymore.
 
 ### Pitch detection pipeline
 
 Live pitch detection runs almost entirely off the main thread:
 
-1. `hooks/useFrequencyAnalyzer.ts` requests mic access, creates an `AudioContext`, and loads `public/audio-worklets/pitch-processor.js` as an `AudioWorkletNode` (module path is a literal `/audio-worklets/pitch-processor.js`, served from `public/`, not imported/bundled by Next — edit the worklet file directly).
-2. The worklet (`pitch-processor.js`) buffers incoming audio (4096 samples) and runs either the **YIN** or **MPM** algorithm entirely inside `AudioWorkletProcessor.process()`, posting `{ frequency }` back over `port.postMessage`.
-3. The hook throttles incoming messages to one update per 200ms (`lastUpdateRef`), converts frequency to note/octave/cents against the selected tuning standard's A4 (440/432/415/392/466 Hz), and exposes `{ frequency, note, cents, octave, isListening, startListening, stopListening, setAlgorithm }`.
+1. `hooks/useFrequencyAnalyzer.ts` requests mic access, creates an `AudioContext` (via `lib/utils.ts:createAudioContext`), and loads `public/audio-worklets/pitch-processor.js` as an `AudioWorkletNode` (module path is a literal `/audio-worklets/pitch-processor.js`, served from `public/`, not bundled by Next — edit the worklet files directly). On any failure after the mic stream/AudioContext are created, the `catch` block releases both (`track.stop()` / `ctx.close()`) before surfacing a user-facing `error` string from the hook.
+2. `pitch-processor.js` buffers incoming audio (4096 samples) and, inside `AudioWorkletProcessor.process()`, calls into `public/audio-worklets/pitch-detection.js` (imported as an ES module — `audioWorklet.addModule()` loads worklet scripts as modules, so relative `import`s between files under `public/audio-worklets/` work) to run either the **YIN** or **MPM** algorithm, posting `{ frequency }` back over `port.postMessage`. The pure algorithm functions live in `pitch-detection.js` specifically so they can be unit-tested (`lib/pitchDetection.test.ts`) without any `AudioWorkletProcessor` mocking.
+3. The hook throttles incoming messages to one update per 200ms (`lastUpdateRef`), converts frequency to note/octave/cents via `lib/utils.ts:getNoteFromFrequency` against the selected tuning standard's A4, and exposes `{ frequency, note, cents, octave, error, isListening, startListening, stopListening, setAlgorithm }`.
 4. The active algorithm is pushed into the worklet via `port.postMessage({ algorithm })` — both on worklet creation and whenever `algorithm` changes while listening.
 
-Tone/chord playback (for reference notes and ear training) is separate from analysis and does **not** go through the worklet: `hooks/useTonePlayer.ts` (single note, layered sine/triangle oscillators simulating a piano-ish timbre) and `hooks/useChordPlayer.ts` (multiple simultaneous oscillators) each manage their own `AudioContext` and oscillator/gain node lifecycles directly, and must be explicitly stopped/disconnected (`stopTone`/`stopChord`) before starting new sounds to avoid leaking nodes.
+Tone/chord playback (for reference notes and ear training) is separate from analysis and does **not** go through the worklet: `hooks/useTonePlayer.ts` (single note, layered sine/triangle oscillators simulating a piano-ish timbre) and `hooks/useChordPlayer.ts` (multiple simultaneous oscillators) both build on the shared `hooks/useAudioNodes.ts`, which owns the `AudioContext` lifecycle and the oscillator/gain node registry (`registerNodes`/`stop`) — each hook only implements its own oscillator/envelope shape and calls `registerNodes(...)` once per sound.
 
 ### Note/frequency math
 
-`lib/utils.ts:calculateFrequency(note, tuningA4)` converts a note name like `"E2"` or `"Eb2"` (supports both sharp and flat spellings) into a frequency, given the tuning standard's A4 in Hz. This is the shared conversion used by the reference tuner and chord trainer. `useFrequencyAnalyzer` and `treinar/afinacao/page.tsx` each have their own local, slightly different note<->frequency logic (different note-name arrays, A4-relative math) rather than reusing `calculateFrequency` — this is existing duplication, not a shared module: don't assume changing one updates the others.
+`lib/utils.ts` is the single source of truth for tuning math:
+- `getTuningStandardFrequency(standard)` — the A4 reference (Hz) for a tuning standard string; unknown values fall back to 440.
+- `calculateFrequency(note, tuningA4)` — note name (e.g. `"E2"`, `"Eb2"`, sharps or flats) → frequency.
+- `getNoteFromFrequency(freq, tuningA4)` — the inverse: frequency → `{ note, octave, cents } | null`.
+- `semitonesToFrequency(semitones, tuningA4)` — the shared `tuningA4 * 2^(semitones/12)` formula both of the above build on.
+
+`treinar/afinacao/page.tsx` is the one deliberate exception: it uses its own `NOTE_NAMES` array that starts at A instead of C, so its octave numbering is shifted by one relative to standard scientific pitch notation used everywhere else. This is intentional (it's just exercise labeling, not tied to real instrument tuning) — don't "fix" it by swapping in `calculateFrequency`/`getNoteFromFrequency` without checking, since that would silently shift every training frequency by an octave. It does reuse `semitonesToFrequency` for the actual math.
 
 ### Instrument/chord data
 
