@@ -3,7 +3,8 @@ import React from 'react';
 export type StringColor = 'yellow' | 'red' | 'black' | 'green' | 'purple' | 'gray';
 
 interface StringProps {
-  color?: 'yellow' | 'red' | 'black' | 'green' | 'purple' | 'gray';
+  color?: StringColor;
+  label?: string;
   onClick?: () => void
 }
 
@@ -16,18 +17,20 @@ const colorToClass = {
   gray: 'bg-gray-900'
 };
 
-const String: React.FC<StringProps> = ({ color = 'gray', onClick = () => {} }) => {
+const String: React.FC<StringProps> = ({ color = 'gray', label, onClick = () => {} }) => {
   const bgClass = colorToClass[color] || 'bg-gray-900';
 
-   const handleClick = () => {
-    return onClick()
-  }
-
   return (
-    <div className="flex flex-col items-center cursor-pointer" onClick={handleClick}>
-      <div className={`w-1 h-40 rounded-t ${bgClass}`}></div>
-      <div className={`size-4 -mt-2 rounded-full ${bgClass}`}></div>
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label ? `Tocar corda ${label}` : 'Tocar corda'}
+      className="flex flex-col items-center cursor-pointer"
+    >
+      {/* Borda sempre visível: bg-black/bg-gray-900 sem contorno somem contra o fundo escuro do app. */}
+      <div className={`w-1 h-40 rounded-t border border-border-strong ${bgClass}`}></div>
+      <div className={`size-4 -mt-2 rounded-full border border-border-strong ${bgClass}`}></div>
+    </button>
   );
 };
 

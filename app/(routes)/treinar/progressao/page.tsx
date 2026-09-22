@@ -148,7 +148,7 @@ export default function ChordEarTraining() {
               key={index}
               className={`w-12 h-12 rounded-md flex items-center justify-center text-lg font-bold
                 ${isRevealed ? 'bg-info text-info-foreground' : ''}
-                ${isAnswer && !showResult ? 'bg-background-disabled hover:bg-background-disabled' : ''}
+                ${isAnswer && !showResult ? 'bg-disabled' : ''}
                 ${isAnswer && showResult ? 
                   (currentProgression.chords[index].name === userAnswer ? 
                     'bg-success text-success-foreground' : 'bg-danger text-danger-foreground') : ''}
@@ -165,8 +165,8 @@ export default function ChordEarTraining() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="bg-surface rounded-lg shadow-lg p-6 w-full max-w-md flex flex-col gap-8">
+    <div className="flex flex-row flex-grow justify-center items-center">
+      <div className="bg-surface rounded-xl shadow-md p-6 w-full max-w-md flex flex-col gap-8">
         <div>
           <label htmlFor="difficulty" className="block text-sm font-medium mb-1 text-muted-foreground">
             Dificuldade
@@ -222,9 +222,9 @@ export default function ChordEarTraining() {
         </div>
         
         {showResult && currentProgression && (
-          <div className={`p-4 rounded-md mb-4 text-foreground ${
-            isCorrect ? 'bg-success' : 'bg-danger'
-          }`}>
+          <div className={`p-4 rounded-md mb-4 ${
+            isCorrect ? 'bg-success text-success-foreground' : 'bg-danger text-danger-foreground'
+          }`} aria-live="polite">
             <p className="font-semibold">
               {isCorrect ? 'Correto!' : 'Incorreto!'}
             </p>

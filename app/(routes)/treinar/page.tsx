@@ -10,14 +10,14 @@ type LinkItem = {
 };
 
 const items: LinkItem[] = [
-  { title: "Afinação", href: "/treinar/afinacao", icon: AudioLines, description: "" },
-  { title: "Progressão", href: "/treinar/progressao", icon: KeyboardMusic, description: "" },
+  { title: "Afinação", href: "/treinar/afinacao", icon: AudioLines, description: "Treine afinar de ouvido, sem o afinador" },
+  { title: "Progressão", href: "/treinar/progressao", icon: KeyboardMusic, description: "Treine reconhecer progressões de acordes" },
 ];
 
 export default function TrainingLinks() {
   return (
     <div className="flex flex-row flex-grow justify-center items-center">
-      <div className="w-lg mx-auto p-6">
+      <div className="max-w-lg mx-auto p-6">
         <ul className="flex flex-col gap-4">
           {items.map(({ title, href, description, icon: Icon }) => (
             <li key={href}>
@@ -33,7 +33,7 @@ export default function TrainingLinks() {
                   <span className="block text-base font-medium">{title}</span>
                   <span className="block text-sm">{description}</span>
                 </span>
-                <ChevronRight />
+                <ChevronRight aria-hidden />
               </Link>
             </li>
           ))}

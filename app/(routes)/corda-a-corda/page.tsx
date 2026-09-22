@@ -95,7 +95,7 @@ const InstrumentTuner = () => {
               id="instrument"
               value={instrument}
               onChange={(e) => setInstrument(e.target.value as Instrument)}
-              className="w-full px-3 py-2 border border-border-strong dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+              className="w-full px-3 py-2 border border-border-strong rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary bg-surface-muted text-foreground"
             >
               <option value="guitar">Violão/Guitarra</option>
               <option value="violin">Violino</option>
@@ -108,14 +108,14 @@ const InstrumentTuner = () => {
           
           {/* Seletor de Afinação do Instrumento */}
           <div>
-            <label htmlFor="tuningType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="tuningType" className="block text-sm font-medium text-foreground mb-1">
               Tipo de Afinação
             </label>
             <select
               id="tuningType"
               value={tuningType}
               onChange={(e) => setTuningType(e.target.value)}
-              className="w-full px-3 py-2 border border-border-strong dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+              className="w-full px-3 py-2 border border-border-strong rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary bg-surface-muted text-foreground"
             >
               {Object.keys(INSTRUMENT_TUNINGS[instrument]).map(tuning => (
                 <option key={tuning} value={tuning}>
@@ -133,7 +133,7 @@ const InstrumentTuner = () => {
           
           {/* Lista de Cordas para Afinar */}
           <div className="mt-6">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+            <h2 className="text-lg font-semibold text-foreground mb-3">
               Cordas do {getInstrumentName(instrument)}
             </h2>
             
@@ -142,6 +142,7 @@ const InstrumentTuner = () => {
                 <div key={index} className="flex flex-col gap-2">
                   <String
                     color={STRING_COLORS[index]}
+                    label={string.name}
                     onClick={() => playString(string.frequency)}
                   />
                   <span>{ string.name }</span>

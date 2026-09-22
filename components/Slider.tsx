@@ -40,10 +40,10 @@ const Slider: React.FC<SliderProps> = ({
     <div className={`w-full ${className}`}>
       {label && (
         <div className="flex justify-between items-center mb-1">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium text-muted-foreground">
             {label}
           </label>
-          <span className={`${hideValue ? 'hidden' : ''} text-sm font-semibold text-gray-700 dark:text-gray-300`}>
+          <span className={`${hideValue ? 'hidden' : ''} text-sm font-semibold text-muted-foreground`}>
             {sliderValue.toFixed(step < 1 ? 2 : 0)}{unit}
           </span>
         </div>
@@ -69,7 +69,7 @@ const Slider: React.FC<SliderProps> = ({
       
       {!label && (
         <div className="text-right mt-1">
-          <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          <span className="text-sm font-semibold text-muted-foreground">
             {sliderValue.toFixed(step < 1 ? 2 : 0)}{unit}
           </span>
         </div>

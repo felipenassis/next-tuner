@@ -165,7 +165,7 @@ const Treinar = () => {
 
   return (
     <div className="flex flex-row flex-grow justify-center items-center">
-      <div className="p-6 bg-surface rounded-lg shadow-lg min-w-md mx-auto flex flex-col gap-8">
+      <div className="p-6 bg-surface rounded-xl shadow-md max-w-md mx-auto flex flex-col gap-8">
         <div>
           <label htmlFor="difficulty" className="block text-sm font-medium mb-1 text-muted-foreground">
             Dificuldade
@@ -217,32 +217,19 @@ const Treinar = () => {
             onChange={setSliderValue}
           />
           
-          <div className="flex justify-between items-center hidden">
-            <span className="text-sm text-gray-600 dark:text-gray-300">
-              Sua frequência: {sliderValue.toFixed(2)} Hz
-            </span>
-            <span className={`text-sm ${
-              Math.abs(sliderValue - targetNote.frequency) <= getToleranceForDifficulty()
-                ? 'text-success'
-                : 'text-danger'
-            }`}>
-              Diferença: {(sliderValue - targetNote.frequency).toFixed(2)} Hz
-            </span>
-          </div>
-          
           <button
             onClick={handleCheckAnswer}
-            className={`w-full py-3 rounded-md font-bold text-white ${
-              isCorrect 
-                ? 'bg-success'
-                : 'bg-primary'
+            className={`w-full py-3 rounded-md font-bold ${
+              isCorrect
+                ? 'bg-success text-success-foreground'
+                : 'bg-primary text-primary-foreground'
             }`}
           >
             {isCorrect ? '✓ Correto! Próximo desafio...' : 'Verificar Resposta'}
           </button>
-          
+
           {isCorrect && (
-            <div className="p-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded text-center">
+            <div className="p-2 bg-success text-success-foreground rounded text-center" aria-live="polite">
               Parabéns! Você acertou a frequência.
             </div>
           )}
