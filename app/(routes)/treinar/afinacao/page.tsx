@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Slider from '@/components/Slider';
 import { useTonePlayer } from '@/hooks/useTonePlayer';
+import { getTuningStandardFrequency, semitonesToFrequency } from '@/lib/utils';
+import useSettings from '@/hooks/useSettings';
 
 // Tipos e constantes
 type Difficulty = 'easy' | 'medium' | 'hard';
@@ -13,8 +15,9 @@ type NoteInfo = {
   frequency: number;
 };
 
-const DEFAULT_TUNING = 440;
-const SEMITONE_RATIO = Math.pow(2, 1/12);
+// Convenção própria desta página: a oitava é contada a partir do Lá (A),
+// não do Dó (C) como na notação científica usada no resto do app — é só
+// um rótulo para o exercício, não precisa bater com a afinação por corda.
 const NOTE_NAMES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
 
 const Treinar = () => {
@@ -30,20 +33,7 @@ const Treinar = () => {
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
 
   const { playTone } = useTonePlayer();
-
-  // Utilitários
-  const getTuningFromLocalStorage = (): number => {
-    try {
-      const savedSettings = localStorage.getItem('appSettings');
-      if (savedSettings) {
-        const settings = JSON.parse(savedSettings);
-        return Number(settings.tuning) || DEFAULT_TUNING;
-      }
-      return DEFAULT_TUNING;
-    } catch {
-      return DEFAULT_TUNING;
-    }
-  };
+  const { settings } = useSettings();
 
   const generateNoteFrequencyMap = (tuning: number): NoteFrequencyMap => {
     const notes: string[] = [];
@@ -64,7 +54,7 @@ const Treinar = () => {
       const octave = parseInt(note.replace(/[^0-9]/g, '')) || 4;
       const noteIndex = NOTE_NAMES.indexOf(noteName);
       const semitonesFromA4 = noteIndex + (octave - 4) * 12;
-      frequencyMap[note] = tuning * Math.pow(SEMITONE_RATIO, semitonesFromA4);
+      frequencyMap[note] = semitonesToFrequency(semitonesFromA4, tuning);
     });
 
     return frequencyMap;
@@ -111,11 +101,11 @@ const Treinar = () => {
     return `${noteMap[noteName] || noteName}${octave}`;
   };
 
-  // Inicializa afinação e gera mapa de notas
+  // Inicializa afinação e gera mapa de notas (reage a mudanças feitas em Preferências)
   useEffect(() => {
-    const savedTuning = getTuningFromLocalStorage();
-    setNoteFrequencies(generateNoteFrequencyMap(savedTuning));
-  }, []);
+    const tuningA4 = getTuningStandardFrequency(settings.tuning);
+    setNoteFrequencies(generateNoteFrequencyMap(tuningA4));
+  }, [settings.tuning]);
 
   // Gera novo desafio
   const initNewChallenge = () => {

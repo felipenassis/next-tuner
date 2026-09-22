@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { createAudioContext, getNoteFromFrequency, getTuningStandardFrequency } from '@/lib/utils';
 
 type TuningStandard = '440' | '432' | '415' | '392' | '466';
 type PitchAlgorithm = 'YIN' | 'MPM';
@@ -14,59 +15,20 @@ type NoteInfo = {
   setAlgorithm: (algo: PitchAlgorithm) => void;
 };
 
-const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-
 const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgorithm: PitchAlgorithm = 'YIN'): NoteInfo => {
   const [frequency, setFrequency] = useState<number>(0);
   const [isListening, setIsListening] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [algorithm, setAlgorithm] = useState<PitchAlgorithm>(initialAlgorithm);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
   const microphoneRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const workletNodeRef = useRef<AudioWorkletNode | null>(null);
   const lastUpdateRef = useRef<number>(0);
 
-  const getStandardFrequency = (standard: TuningStandard): number => {
-    switch (standard) {
-      case '440': return 440.0;
-      case '415': return 415.3;
-      case '392': return 392.0;
-      case '466': return 466.16;
-      default: return 440.0;
-    }
-  };
-
-  const getTuningStandard = (): TuningStandard => {
-    const standard = initialTuning as TuningStandard;
-    return standard || '440';
-  };
-
-  const getNoteInfo = (freq: number): { note: string | null; octave: number | null; cents: number | null } => {
-    if (freq <= 0) return { note: null, octave: null, cents: null };
-
-    const standard = getTuningStandard();
-    const A4 = getStandardFrequency(standard);
-    
-    const semitonesFromA4 = 12 * Math.log2(freq / A4);
-    const midiNote = Math.round(semitonesFromA4) + 69;
-    const noteIndex = midiNote % 12;
-    const note = NOTE_NAMES[noteIndex];
-    const octave = Math.floor(midiNote / 12) - 1;
-    const exactFrequency = A4 * Math.pow(2, (midiNote - 69) / 12);
-    const cents = Math.round(1200 * Math.log2(freq / exactFrequency));
-    
-    return { 
-      note, 
-      octave: octave < 0 ? null : octave,
-      cents
-    };
-  };
-
   const handleWorkletMessage = useCallback((event: MessageEvent) => {
     const now = Date.now();
     if (now - lastUpdateRef.current < 200) return;
-    
+
     if (event.data.frequency && event.data.frequency > 0) {
       setFrequency(event.data.frequency);
     }
@@ -83,7 +45,7 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
 
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      ctx = createAudioContext();
 
       // Carrega e adiciona o Audio Worklet
       try {
@@ -93,18 +55,13 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
         throw new Error('Audio Worklet não pôde ser carregado');
       }
 
-      const analyser = ctx.createAnalyser();
       const microphone = ctx.createMediaStreamSource(stream);
 
       // Cria o Audio Worklet Node
       const workletNode = new AudioWorkletNode(ctx, 'pitch-processor');
 
-      // Configura o analisador
-      analyser.fftSize = 4096;
-
-      // Conecta os nós: microfone -> analisador -> worklet
-      microphone.connect(analyser);
-      analyser.connect(workletNode);
+      // Conecta os nós: microfone -> worklet
+      microphone.connect(workletNode);
 
       // Configura o handler de mensagens
       workletNode.port.onmessage = handleWorkletMessage;
@@ -113,7 +70,6 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
       workletNode.port.postMessage({ algorithm });
 
       audioContextRef.current = ctx;
-      analyserRef.current = analyser;
       microphoneRef.current = microphone;
       workletNodeRef.current = workletNode;
 
@@ -155,7 +111,6 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
     }
 
     audioContextRef.current = null;
-    analyserRef.current = null;
     microphoneRef.current = null;
     setIsListening(false);
     setFrequency(0);
@@ -175,14 +130,14 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
     };
   }, [stopListening]);
 
-  const noteInfo = getNoteInfo(frequency);
+  const noteInfo = getNoteFromFrequency(frequency, getTuningStandardFrequency(initialTuning));
 
   return {
     frequency,
     isListening,
-    note: noteInfo.note,
-    cents: noteInfo.cents,
-    octave: noteInfo.octave,
+    note: noteInfo?.note ?? null,
+    cents: noteInfo?.cents ?? null,
+    octave: noteInfo && noteInfo.octave >= 0 ? noteInfo.octave : null,
     error,
     startListening,
     stopListening,

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { createAudioContext } from '@/lib/utils';
 
 export const useTonePlayer = () => {
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -6,7 +7,7 @@ export const useTonePlayer = () => {
 
   // Inicializa o AudioContext
   useEffect(() => {
-    audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    audioContextRef.current = createAudioContext();
     return () => {
       stopTone();
       audioContextRef.current?.close();

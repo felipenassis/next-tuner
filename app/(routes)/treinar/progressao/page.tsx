@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useChordPlayer } from '@/hooks/useChordPlayer';
-import { calculateFrequency } from '@/lib/utils';
+import { calculateFrequency, getTuningStandardFrequency } from '@/lib/utils';
 import useSettings from '@/hooks/useSettings';
 
 type Difficulty = 'easy' | 'medium' | 'hard';
@@ -101,9 +101,11 @@ export default function ChordEarTraining() {
     setIsPlaying(true);
     stopChord();
     
+    const tuningA4 = getTuningStandardFrequency(settings.tuning);
+
     for (let i = 0; i < currentProgression.chords.length; i++) {
       const chord = currentProgression.chords[i];
-      const frequencies = chord.notes.map(note => calculateFrequency(note, parseInt(settings.tuning)))
+      const frequencies = chord.notes.map(note => calculateFrequency(note, tuningA4))
       playChord(frequencies, 1.5, 0.6);
       await new Promise(resolve => setTimeout(resolve, 1500));
     }

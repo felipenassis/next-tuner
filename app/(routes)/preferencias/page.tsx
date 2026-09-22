@@ -6,8 +6,7 @@ export default function SettingsPage() {
   const { settings, updateSetting } = useSettings()
 
   const handleThemeChange = (value: Theme) => {
-    document.documentElement.classList.toggle('dark', value === 'dark')
-    updateSetting('theme', value as Theme)
+    updateSetting('theme', value)
   }
 
   return (

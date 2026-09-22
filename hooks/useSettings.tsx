@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 
 export type Theme = 'light' | 'dark' | 'system'
 export type Algorithm = 'YIN' | 'MPM'
@@ -14,7 +14,24 @@ export interface Settings {
 
 const STORAGE_KEY = 'appSettings'
 
-export default function useSettings() {
+const DEFAULT_SETTINGS: Settings = {
+  theme: 'system',
+  algorithm: 'YIN',
+  tuning: '440',
+}
+
+interface SettingsContextValue {
+  settings: Settings
+  toggleTheme: () => void
+  chooseTheme: (theme: Theme) => void
+  updateSetting: <K extends keyof Settings>(key: K, value: Settings[K]) => void
+}
+
+const SettingsContext = createContext<SettingsContextValue | null>(null)
+
+// Fonte única de verdade para as settings em runtime — todas as páginas leem
+// e escrevem por aqui, em vez de reimplementar acesso ao localStorage.
+export function SettingsProvider({ children }: { children: ReactNode }) {
   const applyTheme = useCallback((theme: Theme) => {
     const root = document.documentElement
     root.classList.remove('dark')
@@ -32,18 +49,13 @@ export default function useSettings() {
       const saved = localStorage.getItem(STORAGE_KEY)
       if (saved) {
         try {
-          const parsed: Settings = JSON.parse(saved)
-          return parsed
+          return JSON.parse(saved) as Settings
         } catch {
           // se o JSON estiver corrompido, volta pro padrão
         }
       }
     }
-    return {
-      theme: 'system',
-      algorithm: 'YIN',
-      tuning: '440',
-    }
+    return DEFAULT_SETTINGS
   })
 
   // Aplica o tema quando mudar
@@ -83,5 +95,17 @@ export default function useSettings() {
     []
   )
 
-  return { settings, toggleTheme, chooseTheme, updateSetting }
+  return (
+    <SettingsContext.Provider value={{ settings, toggleTheme, chooseTheme, updateSetting }}>
+      {children}
+    </SettingsContext.Provider>
+  )
+}
+
+export default function useSettings() {
+  const context = useContext(SettingsContext)
+  if (!context) {
+    throw new Error('useSettings precisa ser usado dentro de um SettingsProvider')
+  }
+  return context
 }

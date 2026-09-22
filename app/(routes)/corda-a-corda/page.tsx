@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTonePlayer } from '@/hooks/useTonePlayer';
 import String, { StringColor } from '@/components/String';
-import { calculateFrequency } from '@/lib/utils';
+import { calculateFrequency, getTuningStandardFrequency } from '@/lib/utils';
+import useSettings from '@/hooks/useSettings';
 
 type Instrument = 'guitar' | 'violin' | 'cello' | 'bass' | 'ukulele' | 'cavaco';
 
@@ -42,40 +43,27 @@ const INSTRUMENT_TUNINGS: Record<Instrument, Record<string, string[]>> = {
 
 const STRING_COLORS: StringColor[] = ['yellow', 'red', 'black', 'green', 'purple', 'gray']
 
-const getTuningFromLocalStorage = (): number => {
-  try {
-    const savedSettings = localStorage.getItem('appSettings');
-    if (savedSettings) {
-      const settings = JSON.parse(savedSettings);
-      return Number(settings.tuning) || 440;
-    }
-    return 440;
-  } catch {
-    return 440;
-  }
-};
-
 const InstrumentTuner = () => {
   const [instrument, setInstrument] = useState<Instrument>('guitar');
   const [tuningType, setTuningType] = useState('standard');
   const [strings, setStrings] = useState<StringConfig[]>([]);
   const { playTone, stopTone } = useTonePlayer();
+  const { settings } = useSettings();
 
-  // Carrega a afinação e atualiza quando instrumento ou afinação muda
+  // Carrega a afinação e atualiza quando instrumento, tipo de afinação ou padrão de afinação muda
   useEffect(() => {
-    const savedTuning = getTuningFromLocalStorage();
-    
     const instrumentTunings = INSTRUMENT_TUNINGS[instrument];
     if (!instrumentTunings || !instrumentTunings[tuningType]) return;
-    
+
+    const tuningA4 = getTuningStandardFrequency(settings.tuning);
     const stringNotes = instrumentTunings[tuningType];
     const newStrings = stringNotes.map(note => ({
       name: note,
-      frequency: calculateFrequency(note, savedTuning)
+      frequency: calculateFrequency(note, tuningA4)
     }));
-    
+
     setStrings(newStrings);
-  }, [instrument, tuningType]);
+  }, [instrument, tuningType, settings.tuning]);
 
   const playString = (frequency: number) => {
     stopTone();

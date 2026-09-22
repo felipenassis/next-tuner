@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { createAudioContext } from '@/lib/utils';
 
 export const useChordPlayer = () => {
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -9,7 +10,7 @@ export const useChordPlayer = () => {
 
   // Inicializa o AudioContext
   useEffect(() => {
-    audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    audioContextRef.current = createAudioContext();
     return () => {
       stopChord();
       audioContextRef.current?.close();
