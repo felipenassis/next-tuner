@@ -89,15 +89,14 @@ class PitchProcessor extends AudioWorkletProcessor {
 
     if (peakPositions.length === 0) return 0;
 
-    let highestPeakPos = peakPositions[0];
-    let highestPeakValue = NSDF[highestPeakPos];
-    
-    for (const pos of peakPositions) {
-      if (NSDF[pos] > highestPeakValue) {
-        highestPeakValue = NSDF[pos];
-        highestPeakPos = pos;
-      }
-    }
+    // O método MPM (McLeod Pitch Method) original não escolhe o pico global
+    // mais alto do NSDF: picos espúrios podem superar o pico real por causa
+    // da janela de amostras cada vez menor conforme tau cresce. O correto é
+    // pegar o primeiro pico (menor tau, ou seja, a frequência mais aguda
+    // plausível) cujo valor esteja a pelo menos k% do maior pico encontrado.
+    const K = 0.9;
+    const highestPeakValue = Math.max(...peakPositions.map(pos => NSDF[pos]));
+    const highestPeakPos = peakPositions.find(pos => NSDF[pos] >= highestPeakValue * K) ?? peakPositions[0];
 
     if (highestPeakPos > 0 && highestPeakPos < NSDF.length - 1) {
       const s0 = NSDF[highestPeakPos - 1];
