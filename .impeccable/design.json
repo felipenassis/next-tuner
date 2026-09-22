@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-22T00:00:00Z",
+  "title": "Design System: next-tuner",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Azul Padrão",
+        "canonical": "oklch(54.6% 0.245 262.881)",
+        "tonalRamp": [
+          "oklch(37.9% 0.146 265.522)",
+          "oklch(42.4% 0.199 265.638)",
+          "oklch(48.8% 0.243 264.376)",
+          "oklch(54.6% 0.245 262.881)",
+          "oklch(62.3% 0.214 259.815)",
+          "oklch(70.7% 0.165 254.624)",
+          "oklch(80.9% 0.105 251.813)",
+          "oklch(88.2% 0.059 254.128)"
+        ]
+      },
+      "accent": {
+        "role": "secondary",
+        "displayName": "Indigo Padrão",
+        "canonical": "oklch(58.5% 0.233 277.117)",
+        "tonalRamp": [
+          "oklch(35.9% 0.144 278.697)",
+          "oklch(39.8% 0.195 277.366)",
+          "oklch(45.7% 0.24 277.023)",
+          "oklch(51.1% 0.262 276.966)",
+          "oklch(58.5% 0.233 277.117)",
+          "oklch(67.3% 0.182 276.935)",
+          "oklch(78.5% 0.115 274.713)",
+          "oklch(87% 0.065 274.039)"
+        ]
+      },
+      "surface": { "role": "neutral", "displayName": "Superfície do Cartão", "canonical": "oklch(98.4% 0.003 247.858)" },
+      "surface-muted": { "role": "neutral", "displayName": "Superfície Alternativa", "canonical": "oklch(96.8% 0.007 247.896)" },
+      "success": { "role": "success", "displayName": "Verde Padrão", "canonical": "oklch(62.7% 0.194 149.214)" },
+      "danger": { "role": "error", "displayName": "Vermelho Padrão", "canonical": "oklch(57.7% 0.245 27.325)" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Nota Grande", "purpose": "A letra da nota detectada no afinador cromático — único uso de text-9xl no app." },
+      "body": { "displayName": "Corpo/Rótulo", "purpose": "Texto corrido, rótulos de campo e dados numéricos (Hz, cents) — mesma família, sem variante mono." }
+    },
+    "shadows": [
+      { "name": "field", "value": "0 1px 2px rgba(0,0,0,0.05)", "purpose": "shadow-sm em inputs/selects." },
+      { "name": "card", "value": "0 4px 6px rgba(0,0,0,0.1)", "purpose": "shadow-md no cartão principal (algumas páginas usam shadow-lg em vez disso — inconsistência não resolvida, ver Do's and Don'ts)." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação principal de cada tela (ex.: \"Novo Exercício\", \"Verificar Resposta\").",
+      "html": "<button class=\"ds-btn-primary\">Verificar Resposta</button>",
+      "css": ".ds-btn-primary { background: var(--color-primary, oklch(54.6% 0.245 262.881)); color: #fff; padding: 8px 16px; border-radius: 6px; border: none; font-weight: 700; cursor: pointer; } .ds-btn-primary:hover { cursor: pointer; } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-primary, oklch(54.6% 0.245 262.881)); outline-offset: 2px; }"
+    },
+    {
+      "name": "Accent Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ação secundária ao lado de uma ação primária (ex.: \"Tocar Progressão\").",
+      "html": "<button class=\"ds-btn-accent\">Tocar Progressão</button>",
+      "css": ".ds-btn-accent { background: var(--color-accent, oklch(58.5% 0.233 277.117)); color: #fff; padding: 8px 16px; border-radius: 6px; border: none; font-weight: 700; cursor: pointer; }"
+    },
+    {
+      "name": "Select Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Padrão de campo mais consistente do projeto — repetido em Preferências, Corda a Corda e Treinar.",
+      "html": "<select class=\"ds-select\"><option>A = 440 Hz (Padrão moderno)</option></select>",
+      "css": ".ds-select { width: 100%; padding: 8px 12px; background: var(--color-surface-muted, oklch(96.8% 0.007 247.896)); color: var(--color-foreground, oklch(21% 0.034 264.665)); border: 1px solid var(--color-border-strong, oklch(87.2% 0.01 258.338)); border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); } .ds-select:focus { outline: none; border-color: var(--color-primary, oklch(54.6% 0.245 262.881)); box-shadow: 0 0 0 2px var(--color-primary, oklch(54.6% 0.245 262.881)); }"
+    },
+    {
+      "name": "Nav Tab",
+      "kind": "nav",
+      "refersTo": "nav-tab",
+      "description": "Item de navegação do TabPanel fixo no topo; estado ativo vs. inativo.",
+      "html": "<a class=\"ds-tab ds-tab-active\" href=\"/\">Cromático</a>",
+      "css": ".ds-tab { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 6px; font-weight: 500; font-size: 0.875rem; color: var(--color-muted-foreground, oklch(44.6% 0.03 256.802)); } .ds-tab:hover { color: var(--color-foreground, oklch(21% 0.034 264.665)); background: var(--color-surface-muted, oklch(96.8% 0.007 247.896)); } .ds-tab-active { color: var(--color-primary, oklch(54.6% 0.245 262.881)); background: var(--color-surface-muted, oklch(96.8% 0.007 247.896)); font-weight: 600; }"
+    },
+    {
+      "name": "String (signature)",
+      "kind": "custom",
+      "refersTo": "string",
+      "description": "Corda de instrumento clicável na tela Corda a Corda — barra + \"cravelha\" circular. Cores fora do sistema de tokens (gap conhecido).",
+      "html": "<button class=\"ds-string\" aria-label=\"Tocar corda E2\"><span class=\"ds-string-bar\"></span><span class=\"ds-string-peg\"></span></button>",
+      "css": ".ds-string { display: flex; flex-direction: column; align-items: center; background: none; border: none; cursor: pointer; } .ds-string-bar { width: 4px; height: 160px; border-top-left-radius: 4px; border-top-right-radius: 4px; background: #713f12; } .ds-string-peg { width: 16px; height: 16px; margin-top: -8px; border-radius: 9999px; background: #713f12; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "A Bancada do Afinador",
+    "overview": "next-tuner ainda não tem um sistema visual desenhado com intenção — este documento registra honestamente o que existe hoje, para que trabalho futuro reconheça isso como ponto de partida, não como uma decisão de marca a ser preservada a qualquer custo. A sensação atual é utilitária e minimalista: uma tela escura, um cartão único centralizado, cores padrão do Tailwind (azul e indigo, sem paleta customizada), sem ornamento. Isso combina com o que o PRODUCT.md registra — um projeto de estudo, sem ambição de diferenciação de mercado — mas é importante não confundir \"ainda não decidido\" com \"decidido a ser genérico\". Nenhuma referência visual foi rejeitada explicitamente até agora; não há histórico de decisões estéticas a documentar, só o que o código acabou tendo.",
+    "keyCharacteristics": [
+      "Um cartão único, centralizado, por tela — nunca um layout de múltiplas colunas ou grid.",
+      "Paleta padrão do Tailwind (azul/indigo), sem tokens de marca customizados.",
+      "Tipografia: uma única família (Inter), sem hierarquia formal de tamanhos.",
+      "Modo escuro e claro via classe .dark, com tokens semânticos definidos mas nem sempre usados de forma consistente.",
+      "Sem elevação/sombra deliberada — o que existe é resultado de copiar/colar, não de um sistema."
+    ],
+    "rules": [
+      { "name": "A Regra do Cartão Único", "body": "Cada tela é um único cartão centralizado (bg-surface, cantos arredondados, sombra leve) sobre um fundo vazio — não duas colunas, não um grid de cards menores.", "section": "colors" },
+      { "name": "A Regra do Salto", "body": "Não há passos intermediários entre o text-9xl da nota e o resto da interface (majoritariamente text-sm/text-lg) — é um salto de escala, não uma progressão gradual. Isso é o que existe, não necessariamente o que deveria existir.", "section": "typography" }
+    ],
+    "dos": [
+      "Do usar os tokens semânticos (bg-surface, text-foreground, bg-primary, etc.) para qualquer cor nova — nunca uma classe Tailwind crua (bg-gray-700, bg-blue-600).",
+      "Do seguir o padrão de select já estabelecido (bg-surface-muted border border-border-strong rounded-md shadow-sm focus:ring-primary focus:border-primary) para qualquer novo campo — é o único padrão realmente consistente no projeto hoje.",
+      "Do manter o modelo de \"um cartão centralizado por tela\" (max-w-md, bg-surface, p-6) a menos que o conteúdo da tela genuinamente exija outra estrutura."
+    ],
+    "donts": [
+      "Don't misturar rounded-xl/rounded-lg ou shadow-md/shadow-lg para o mesmo papel de \"cartão principal\" — escolha um valor único e use-o em todas as páginas.",
+      "Don't estilizar cores fora do sistema de tokens (como o componente String faz hoje) — isso quebra o tema escuro/claro e qualquer mudança futura de paleta.",
+      "Don't tratar a paleta azul/indigo atual como uma escolha de marca definitiva ao decidir sobre novo trabalho visual — ela é o default do Tailwind, não uma decisão registrada."
+    ]
+  }
+}
