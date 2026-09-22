@@ -37,7 +37,7 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
 
   const getTuningStandard = (): TuningStandard => {
     const standard = initialTuning as TuningStandard;
-    return standard || 'A440';
+    return standard || '440';
   };
 
   const getNoteInfo = (freq: number): { note: string | null; octave: number | null; cents: number | null } => {
@@ -74,10 +74,13 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
   const startListening = useCallback(async () => {
     if (isListening) return;
 
+    let stream: MediaStream | null = null;
+    let ctx: AudioContext | null = null;
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+
       // Carrega e adiciona o Audio Worklet
       try {
         await ctx.audioWorklet.addModule('/audio-worklets/pitch-processor.js');
@@ -88,20 +91,20 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
 
       const analyser = ctx.createAnalyser();
       const microphone = ctx.createMediaStreamSource(stream);
-      
+
       // Cria o Audio Worklet Node
       const workletNode = new AudioWorkletNode(ctx, 'pitch-processor');
-      
+
       // Configura o analisador
       analyser.fftSize = 4096;
-      
+
       // Conecta os nós: microfone -> analisador -> worklet
       microphone.connect(analyser);
       analyser.connect(workletNode);
-      
+
       // Configura o handler de mensagens
       workletNode.port.onmessage = handleWorkletMessage;
-      
+
       // Envia o algoritmo inicial para o worklet
       workletNode.port.postMessage({ algorithm });
 
@@ -113,6 +116,11 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
       setIsListening(true);
     } catch (error) {
       console.error('Error accessing microphone:', error);
+      // Libera o microfone e fecha o AudioContext caso algo falhe após serem criados
+      stream?.getTracks().forEach(track => track.stop());
+      if (ctx && ctx.state !== 'closed') {
+        await ctx.close();
+      }
       setIsListening(false);
     }
   }, [isListening, algorithm, handleWorkletMessage]);

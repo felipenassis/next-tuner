@@ -44,7 +44,6 @@ export default function Cromatico() {
         { !!frequency &&
           <div className="flex items-center gap-2 mb-8">
             <Diamond size={20} fill={scale == 1 ? '#e7000b' : 'none'} />
-            <Diamond size={20} fill={scale == 1 ? '#e7000b' : 'none'} />
             <Diamond size={20} fill={scale == 2 ? '#e7000b' : 'none'} />
             <Diamond size={20} fill={scale == 3 ? '#e7000b' : 'none'} />
             <Diamond size={20} fill={scale == 4 ? '#e7000b' : 'none'} />
@@ -53,12 +52,10 @@ export default function Cromatico() {
             <Diamond size={20} fill={scale == 7 ? '#e7000b' : 'none'} />
             <Diamond size={20} fill={scale == 8 ? '#e7000b' : 'none'} />
             <Diamond size={20} fill={scale == 9 ? '#e7000b' : 'none'} />
-            <Diamond size={20} fill={scale == 1 ? '#e7000b' : 'none'} />
           </div>
         }
         { !frequency &&
           <div className="flex items-center gap-2 mb-8 text-gray-700">
-            <Diamond size={20} />
             <Diamond size={20} />
             <Diamond size={20} />
             <Diamond size={20} />
@@ -68,14 +65,13 @@ export default function Cromatico() {
             <Diamond size={20} />
             <Diamond size={20} />
             <Diamond size={20} />
-            <Diamond size={20} />
           </div>
         }
         <div>
           { note && <span className="text-9xl">{ note }</span> }
           {!note && <span className="text-9xl text-gray-700">A</span> }
-          { octave && <span className="text-xl">{ octave }</span> }
-          { !octave && <span className="text-xl text-gray-700">0</span> }
+          { octave !== null && <span className="text-xl">{ octave }</span> }
+          { octave === null && <span className="text-xl text-gray-700">0</span> }
         </div>
         <div>
           { !!frequency && <span className="text-sm">{ Math.round(frequency) }hz</span> }

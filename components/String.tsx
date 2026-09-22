@@ -8,10 +8,10 @@ interface StringProps {
 }
 
 const colorToClass = {
-  yellow: 'bg-red-900',
-  red: 'bg-blue-900',
-  black: 'bg-green-900',
-  green: 'bg-gray-900',
+  yellow: 'bg-yellow-900',
+  red: 'bg-red-900',
+  black: 'bg-black',
+  green: 'bg-green-900',
   purple: 'bg-purple-900',
   gray: 'bg-gray-900'
 };

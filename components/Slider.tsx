@@ -43,7 +43,7 @@ const Slider: React.FC<SliderProps> = ({
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             {label}
           </label>
-          <span className={`${!hideValue || 'hidden'} text-sm font-semibold text-gray-700 dark:text-gray-300`}>
+          <span className={`${hideValue ? 'hidden' : ''} text-sm font-semibold text-gray-700 dark:text-gray-300`}>
             {sliderValue.toFixed(step < 1 ? 2 : 0)}{unit}
           </span>
         </div>
