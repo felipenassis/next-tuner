@@ -8,6 +8,7 @@ type NoteInfo = {
   note: string | null;
   cents: number | null;
   octave: number | null;
+  error: string | null;
   startListening: () => void;
   stopListening: () => void;
   setAlgorithm: (algo: PitchAlgorithm) => void;
@@ -18,6 +19,7 @@ const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 
 const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgorithm: PitchAlgorithm = 'YIN'): NoteInfo => {
   const [frequency, setFrequency] = useState<number>(0);
   const [isListening, setIsListening] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [algorithm, setAlgorithm] = useState<PitchAlgorithm>(initialAlgorithm);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -77,6 +79,8 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
     let stream: MediaStream | null = null;
     let ctx: AudioContext | null = null;
 
+    setError(null);
+
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -114,14 +118,22 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
       workletNodeRef.current = workletNode;
 
       setIsListening(true);
-    } catch (error) {
-      console.error('Error accessing microphone:', error);
+    } catch (err) {
+      console.error('Error accessing microphone:', err);
       // Libera o microfone e fecha o AudioContext caso algo falhe após serem criados
       stream?.getTracks().forEach(track => track.stop());
       if (ctx && ctx.state !== 'closed') {
         await ctx.close();
       }
       setIsListening(false);
+
+      if (err instanceof DOMException && err.name === 'NotAllowedError') {
+        setError('Permissão de microfone negada. Habilite o acesso ao microfone para usar o afinador.');
+      } else if (err instanceof DOMException && err.name === 'NotFoundError') {
+        setError('Nenhum microfone foi encontrado.');
+      } else {
+        setError('Não foi possível acessar o microfone.');
+      }
     }
   }, [isListening, algorithm, handleWorkletMessage]);
 
@@ -171,6 +183,7 @@ const useFrequencyAnalyzer = (initialTuning: TuningStandard = '440', initialAlgo
     note: noteInfo.note,
     cents: noteInfo.cents,
     octave: noteInfo.octave,
+    error,
     startListening,
     stopListening,
     setAlgorithm: (algo: PitchAlgorithm) => setAlgorithm(algo),

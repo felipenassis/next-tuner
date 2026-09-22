@@ -14,6 +14,7 @@ export default function Cromatico() {
     cents,
     note,
     octave,
+    error,
     startListening,
     stopListening
   } = useFrequencyAnalyzer(settings.tuning, settings.algorithm)
@@ -75,7 +76,8 @@ export default function Cromatico() {
         </div>
         <div>
           { !!frequency && <span className="text-sm">{ Math.round(frequency) }hz</span> }
-          { !frequency && <span className="text-sm text-gray-700">Toque uma nota</span> }
+          { !frequency && !error && <span className="text-sm text-gray-700">Toque uma nota</span> }
+          { error && <span className="text-sm text-danger">{ error }</span> }
         </div>
       </div>
     </div>
